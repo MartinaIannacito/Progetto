@@ -19,16 +19,16 @@ SEIR <- function(t, state, pars) {
 }
 
 pars <- c(
-  A = 3 * 10^(6), # month^(-1)
-  lambda = 1, # month^(-1)
+  A = 3 * 10^6, # month^(-1) <-
+  lambda = 1, # month^(-1) <-
   sigma = 6, # monrt^(-1)
-  gamma = 0.4, # same
+  gamma = 12*0.4, # same
   m = 0.08, # same
   mu = 1, # same
   k = 0.09, # same
   beta = 1.58 * 10^(-7),
   B = 1.54 * 10^7,
-  gamma_h = 0.4,
+  gamma_h = 12*0.4,
   lambda_h = 1,
   sigma_h = 6,
   m_h = 0.0066,
