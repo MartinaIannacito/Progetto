@@ -22,20 +22,20 @@ pars <- c(
   A = 3 * 10^(6), # month^(-1)
   lambda = 1, # month^(-1)
   sigma = 6, # monrt^(-1)
-  gamma = 0.4, # same
+  gamma = 0.4*12, # same
   m = 0.08, # same
   mu = 1, # same
   k = 0.09, # same
   beta = 1.58 * 10^(-7),
   B = 1.54 * 10^7,
-  gamma_h = 0.4,
+  gamma_h = 0.4*12,
   lambda_h = 1,
   sigma_h = 6,
   m_h = 0.0066,
   beta_h = 2.29 * 10^(-12),
   k_h = 0.54,
   mu_h = 1
-) / 12
+)/ 12
 
 # pars <- c(
 #   A = 2.34 * 10^5, # month^(-1)
@@ -103,3 +103,18 @@ ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, E_d), color = "orange") +
   geom_line(mapping = aes(time, I_d), color = "red") + 
   geom_line(mapping = aes(time, R_d), color = "green") + myTheme
+
+p<-as.list(c(init[1],12*pars))
+
+R0<-with(p,(beta*p[[1]]*sigma*gamma)/((m+k+sigma)*(m+mu)))
+
+I_d_star<-with(p,(m+sigma+k)*(m+lambda+k)*m*(R0-1)/(beta*(m*(m+lambda+k)+sigma*gamma*(m+lambda))))
+
+denominatore<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m+k+sigma*gamma))-beta_h*I_d_star*lambda_h*k_h)
+
+denominatore2<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m_h+k_h+sigma_h*gamma_h))-beta_h*I_d_star*lambda_h*k_h)
+
+
+E_h_star<-with(p,(beta_h*B*(m_h+lambda_h)*I_d_star)/(denominatore2))
+
+I_h_star<-with(p,sigma_h*gamma_h*E_h_star/((m_h+mu_h)))
