@@ -1,0 +1,116 @@
+library(deSolve)
+library(ggplot2)
+
+SEIR <- function(t, state, pars) {
+  with(as.list(c(t, state, pars)), {
+    
+    beta <- function(t) a * (1 + b * sin(pi / 6 * t + 5.5))
+    beta_h <- function(t) a_1 * (1 + b_1 * sin(pi / 6 * t + 5.5))
+    
+    dS_d <- A + lambda * R_d + sigma * (1 - gamma) * E_d - m * S_d - beta(t) * S_d * I_d - k * S_d
+    dE_d <- beta(t) * S_d * I_d - sigma * (1 - gamma) * E_d - k * E_d - m * E_d - sigma * gamma * E_d
+    dI_d <- sigma * gamma * E_d - (m + mu) * I_d
+    dR_d <- k * (S_d + E_d) - (m + lambda) * R_d
+    
+    dS_h <- B + lambda_h * R_h + sigma_h * (1 - gamma_h) * E_h - beta_h(t) * S_h * I_d - m_h  * S_h
+    dE_h <- beta_h(t) * S_h * I_d - sigma_h * (1 - gamma_h) * E_h - sigma_h * gamma_h * E_h - (m_h + k_h) * E_h
+    dI_h <- sigma_h * gamma_h * E_h - (m_h + mu_h) * I_h
+    dR_h <- k_h * E_h - (m_h + lambda_h) * R_h
+    
+    return(list(c(dS_d, dE_d, dI_d, dR_d, dS_h, dE_h, dI_h, dR_h)))
+  })
+}
+
+# months ^ -1
+pars <- c(
+  A = 2.34 * 10 ^ 5,
+  lambda = 1 / 6,
+  sigma = 1 / 1.045,
+  gamma = 0.49,
+  m = 0.0064,
+  a = 9.9 * 10 ^ (-8),
+  b = 0.41,
+  mu = 1,
+  k = 0.09,
+  B = 1.34 * 10^6,
+  lambda_h = 1 / 6,
+  sigma_h = 1 / 2,
+  gamma_h = 0.5,
+  m_h = 0.00057,
+  a_1 = 2.41 * 10 ^ (-11),
+  b_1 = 0.23,
+  k_h = 0.54,
+  mu_h = 1
+)
+
+init <- c(S_d = 3.3 * 10 ^ 7, E_d = 2.2 * 10 ^ 4, I_d = 1.1 * 10 ^ 4,
+  R_d = 3.3 * 10 ^ 6, S_h = 1.29 * 10 ^ 9, E_h = 178, I_h = 89, R_h = 6 * 10 ^ 7)
+times <- seq(1, 1500, by = 0.1)
+SEIR_out <- ode(init, times, SEIR, pars)
+
+myTheme <- theme(axis.text = element_text(size = 20),
+  axis.title = element_text(size = 25),
+  axis.title.y = element_text(margin = margin(r = 20)),
+  axis.title.x = element_text(margin = margin(t = 20)),
+  axis.ticks = element_line(size = .7),
+  axis.ticks.length = unit(.3, "cm"),
+  panel.background = element_rect(fill = "white"),
+  panel.grid.major = element_line(colour = "grey90"),
+  panel.grid.minor = element_line(colour = "grey90"),
+  axis.line = element_line(color = "black", size = .7),
+  plot.title = element_text(hjust = 0.5, size = 25))
+
+# Dogs
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_d), color = "blue") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, E_d), color = "orange") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_d), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, R_d), color = "green") + myTheme
+
+# Humans
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_h), color = "blue") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, E_h), color = "orange") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, R_h), color = "green") + myTheme
+
+# Dogs, 4 in 1 plot
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_d), color = "blue") +
+  geom_line(mapping = aes(time, E_d), color = "orange") +
+  geom_line(mapping = aes(time, I_d), color = "red") + 
+  geom_line(mapping = aes(time, R_d), color = "green") + myTheme
+
+p <- as.list(c(init[1], pars))
+
+R0 <- with(p, (beta * p[[1]] * sigma * gamma) / ((m + k + sigma) * (m + mu)))
+
+I_d_star <- with(p, (m + sigma + k) * (m + lambda + k) * m * (R0 - 1) / 
+    (beta * (m * (m + lambda + k) + sigma * gamma * (m + lambda))))
+
+denominatore <- with(p, (m_h + lambda_h) * (m_h * (m_h + k_h + sigma_h) +
+    beta_h * I_d_star * (m + k + sigma * gamma)) - 
+    beta_h * I_d_star * lambda_h * k_h)
+
+denominatore2 <- with(p, (m_h + lambda_h) * (m_h * (m_h + k_h + sigma_h) +
+    beta_h * I_d_star * (m_h + k_h + sigma_h * gamma_h)) -
+    beta_h * I_d_star * lambda_h * k_h)
+
+E_h_star <- with(p, (beta_h * B * (m_h + lambda_h) * I_d_star) / denominatore)
+
+I_h_star <- with(p, sigma_h * gamma_h * E_h_star / (m_h + mu_h))
