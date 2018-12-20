@@ -16,7 +16,6 @@ SEIR <- function(t, state, pars) {
     I_h <- state[ind[7, ]]
     V_h <- state[ind[8, ]]
     
-    
     dS_d <- A + lambda_d * V_d + sigma_d * (1 - gamma_d) * E_d - beta_d * S_d * I_d - (m_d + k_d) * S_d + phi_S %*% S_d
     dE_d <- beta_d * S_d * I_d - sigma_d * (1 - gamma_d) * E_d - sigma_d * gamma_d * E_d - (m_d + k_d) * E_d + phi_E %*% E_d
     dI_d <- sigma_d * gamma_d * E_d - (m_d + mu_d) * I_d + phi_I %*% I_d
@@ -25,7 +24,7 @@ SEIR <- function(t, state, pars) {
     dS_h <- B + lambda_h * V_h + sigma_h * (1 - gamma_h) * E_h - beta_h * S_h * I_d - m_h  * S_h + psi_S %*% S_h
     dE_h <- beta_h * S_h * I_d - sigma_h * (1 - gamma_h) * E_h - sigma_h * gamma_h * E_h - (m_h + k_h) * E_h + psi_E %*% E_h
     dI_h <- sigma_h * gamma_h * E_h - (m_h + mu_h) * I_h + psi_I %*% I_h
-    dR_h <- k_h * E_h - (m_h + lambda_h) * V_h + psi_V %*% V_h
+    dV_h <- k_h * E_h - (m_h + lambda_h) * V_h + psi_V %*% V_h
     
     return(list(c(dS_d, dE_d, dI_d, dV_d, dS_h, dE_h, dI_h, dV_h)))
   })
@@ -59,13 +58,15 @@ pars <- list(
   phi_V = phi,
   psi_S = psi,
   psi_E = psi,
-  psi_I = matrix(0, nrow = 2),
+  psi_I = matrix(0, nrow = 2, ncol = 2),
   psi_V = psi
 )
 
 pars <- lapply(pars, "/", 12)
 
 init <- c(S_d = 3.5 * 10 ^ 7, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
+  R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5,
+  S_d = 3.5 * 10 ^ 7, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
   R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5)
 #init <- c(S_d = 3.5 * 10^2, E_d = 0, I_d = 1, R_d = 0)
 times <- seq(1, 50 * 12, by = 1)
@@ -119,21 +120,4 @@ ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_d), color = "red") + 
   geom_line(mapping = aes(time, R_d), color = "green") + myTheme
 
-p <- as.list(c(init[1], pars))
 
-R0 <- with(p, (beta * p[[1]] * sigma * gamma) / ((m + k + sigma) * (m + mu)))
-
-I_d_star <- with(p, (m + sigma + k) * (m + lambda + k) * m * (R0 - 1) / 
-    (beta * (m * (m + lambda + k) + sigma * gamma * (m + lambda))))
-
-denominatore <- with(p, (m_h + lambda_h) * (m_h * (m_h + k_h + sigma_h) +
-    beta_h * I_d_star * (m + k + sigma * gamma)) - 
-    beta_h * I_d_star * lambda_h * k_h)
-
-denominatore2 <- with(p, (m_h + lambda_h) * (m_h * (m_h + k_h + sigma_h) +
-    beta_h * I_d_star * (m_h + k_h + sigma_h * gamma_h)) -
-    beta_h * I_d_star * lambda_h * k_h)
-
-E_h_star <- with(p, (beta_h * B * (m_h + lambda_h) * I_d_star) / denominatore)
-
-I_h_star <- with(p, sigma_h * gamma_h * E_h_star / (m_h + mu_h))
