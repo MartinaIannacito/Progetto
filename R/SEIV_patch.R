@@ -32,7 +32,7 @@ SEIR <- function(t, state, pars) {
 
 phi <- matrix(c(0, 0.05, 0.6, 0), nrow = 2)
 diag(phi) <- -rep(sum(phi), 2)
-psi <- matrix(c(0, 0.32, 02, 0), nrow = 2)
+psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
 diag(psi) <- -rep(sum(psi), 2)
 
 pars <- list(
@@ -64,11 +64,25 @@ pars <- list(
 
 pars <- lapply(pars, "/", 12)
 
-init <- c(S_d = 3.5 * 10 ^ 7, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
-  R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5,
-  S_d = 3.5 * 10 ^ 7, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
-  R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5)
-#init <- c(S_d = 3.5 * 10^2, E_d = 0, I_d = 1, R_d = 0)
+init <- c(
+  S_d_1 = 2.4 * 10 ^ 6,
+  S_d_2 = 2.4 * 10 ^ 6,
+  E_d_1 = 2.9 * 10 ^ 4,
+  E_d_2 = 10 ^ 3,
+  I_d_1 = 2 * 10 ^ 4,
+  I_d_2 = 10 ^ 2,
+  V_d_1 = 6 * 10 ^ 5,
+  V_d_2 = 10 ^ 5,
+  S_h_1 = 7.988 * 10 ^ 7,
+  S_h_2 = 7.988 * 10 ^ 7,
+  E_h_1 = 7.13 * 10 ^ 2,
+  E_h_2 = 7.13 * 10 ^ 2,
+  I_h_1 = 20,
+  I_h_2 = 1,
+  V_h_1 = 6 * 10 ^ 5,
+  V_h_2 = 6 * 10 ^ 5
+)
+
 times <- seq(1, 50 * 12, by = 1)
 SEIR_out <- ode(init, times, SEIR, pars)
 
@@ -87,37 +101,9 @@ myTheme <- theme(axis.text = element_text(size = 20),
 # Dogs
 
 ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, S_d), color = "blue") + myTheme
+  geom_line(mapping = aes(time, I_d_1), color = "blue") + 
+  geom_line(mapping = aes(time, I_d_2), color = "red") + myTheme
 
 ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, E_d), color = "orange") + myTheme
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_d), color = "red") + myTheme
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, R_d), color = "green") + myTheme
-
-# Humans
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, S_h), color = "blue") + myTheme
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, E_h), color = "orange") + myTheme
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, R_h), color = "green") + myTheme
-
-# Dogs, 4 in 1 plot
-
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, S_d), color = "blue") +
-  geom_line(mapping = aes(time, E_d), color = "orange") +
-  geom_line(mapping = aes(time, I_d), color = "red") + 
-  geom_line(mapping = aes(time, R_d), color = "green") + myTheme
-
-
+  geom_line(mapping = aes(time, I_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
