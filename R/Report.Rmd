@@ -1,0 +1,203 @@
+---
+title: "Rabies"
+date: "`r Sys.Date()`"
+author:
+-   name: Matteo Ciciani
+    affiliation: &aff Centre for Integrative Biology (CIBIO), University of
+        Trento, Italy
+-   name: Martina Iannacito
+    affiliation: *aff
+output:
+    BiocStyle::pdf_document:
+      fig_caption: yes
+vignette: >
+    %\VignetteIndexEntry{Signature-based Clustering for Diagnostic Purposes}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
+
+## Rabies
+
+Rabies is one of the oldest diseases in recorded human history, dating back more
+than 4000 years. More than 70000 human rabies deaths occur annually, and Asia
+accounts for approximately 80\% of the worldwide total \cite{Wang}. As 40\% of
+those infected are children, the years of life lost by this infection makes
+rabies the seventh most important global infectious disease \cite{Schnell}.
+Currently, China is second only to India in the number of people killed by
+rabies worldwide, and the epidemic area has expanded to almost the entire
+country \cite{Wang}.
+
+Rabies is an acute encephalomyelitis (inflammation of the brain and the spinal
+cord) caused by viruses in the genus \emph{Lyssavirus} of the family
+\emph{Rhabdoviridae}. Rabies lyssavirus (RABLV), the prototype species of the
+genus, causes disease in nearly all terrestrial mammals. Despite the worldwide
+distribution of RABLV, only a few animal species in the orders \emph{Carnivora},
+\emph{Chiroptera} (bats) and \emph{Primates} play a critical role in maintaining
+the circulation of the virus in nature. Most of these mammals harbor
+species-specific RABLV variants which circulate within discrete geographic
+boundaries. However, because almost all cases of human rabies result from the
+bites of rabid dogs, dog-maintained viruses are by far the most important target
+of control measures \cite{Velasco}.
+
+As for most viruses, the rabies virus life cycle can be divided into three
+phases. The first phase includes entry into the host cell by endocytosis
+followed by release of the viral genome into the cytoplasm. The classical
+wild-type rabies virus first infects a muscle cell, then enters a motor neuron
+at the neuromuscular junction. Rabies virus particles are subsequently
+transported in a retrograde direction through the axon of the infected neuron.
+Once the virus particles reach the cell body of the neuron, the second phase
+commences, which involves the production of the virion components. The last
+phase of the life cycle comprises the assembly of the viral components and the
+release of mature rabies virus particles, which can then start a new round of
+infection \cite{Schnell}.
+
+By the time a patient develops the first prodromal symptoms, such as fever,
+flu-like symptoms, and gastrointestinal disturbances, the virus is already
+widely disseminated throughout the central nervous system \cite{Hemachudha}.
+
+Clinical manifestation of rabies in humans has two forms: the furious form (80\%
+of infections), and the paralytic form (20\% of infections). The furious form of
+rabies is characterized by hydrophobia, episodes of hallucinations and
+excitement. These behavioral changes occur simultaneously with the shedding of
+large amounts of rabies virus in the saliva, which facilitates the spread of the
+virus to a new host. The paralytic form of rabies is characterized by weakness
+and flaccid paralysis. In both cases, survival after the onset of symptoms is
+rarely more than 7 days and the disease is lethal in almost 100\% of cases
+\cite{Schnell}.
+
+Human rabies virus infections are controlled by limiting the infection in
+animals and by post-exposure prophylaxis (PEP) of humans after contact with a
+potentially infected animal. Current PEP for previously non-immunized
+individuals consists of one dose with rabies immunoglobulin in conjunction with
+five doses of immunization with inactivated rabies virus vaccines. This regimen
+is effective, but its usefulness in developing countries, where rabies is
+endemic, is hampered by the high cost and lack of compliance \cite{Schnell}.
+
+## SEIR
+
+Nowadays mathematics is used in different scientific areas. As a matter of fact
+mathematical models are commonly applied to investigate the evolution of
+epidemics. One of the most known model is SEIR. It is coherent to apply a basic
+SEIR model if the considered disease has an average period shorter than the
+average time needed to observe significant modifications in the population
+structure. For example it can be applied to describe flu behaviour into the
+human specie. As a matter of fact life of a human being and generation of a new
+individ- ual takes on average more than the duration of the flu. Under this
+assumption demographical aspects are negligible and consequently the model focus
+only on the disease dynamic. In order to apply the model the total population
+$N(t)$ at time t is split into four class:
+
+- $S(t)$ : it is the class of susceptible to the disease at time t;
+- $E(t)$ : it is the class of exposed to the pathogen and not contagious at time
+t;
+- $I(t)$ : it is the class of infectuous at time t;
+- $R(t)$ : it is the class of removed, i.e. those who get out of the model
+because they are dead or they have become immune at time t.
+
+$$
+\begin{cases}
+x = 1+1\\
+y = 3
+\end{cases}
+$$
+
+Then it is assumed that susceptible ones who come into contact with infected
+become exposed at rate $\lambda(t)$ , exposed move into the infectuous class at rate
+$k(t)$ and at last infectous are removed at rate $\gamma(t)$ . The force of
+infection $\lambda(t)$ is mathematically described as:
+
+$$
+\lambda(t) = c(t)\chi\frac{I(t)}{N(t)}
+$$
+
+where $c(t)$ is the average number of contact of one individual in the unit of
+time, $\chi$ is the probability to become infect after a contact with $I(t)$ an
+infectuous and $\frac{I(t)}{N(t)}$ is the total number of infectuous ones. To
+make computations easier it is assumed that all these parameter are constant in
+time and thanks to the absence of demographic aspects also the total population
+is constant. Therefore the SEIR ode system is:
+
+\begin{align}
+  \label{1}
+  \begin{cases}
+    x = 1+1\\
+    y = 3
+  \end{cases}
+\end{align}
+
+It is important to underline that if $\gamma$ is the rate at which an infectuous
+is removed, then $\gamma$ 1 is the average time an individual one spends as
+infectuous. Consequently the basic epidemiologic reproduction number is the
+number of ill people generated by an infectuous in the the life time as
+infectuous, i.e.
+
+$$
+R_0 = \frac{c\chi}{\gamma}
+$$
+
+Add other systems
+
+Apply SEIR to rabies in China
+
+# Reproduction of original results
+
+
+## Dog + humans 
+
+MI : equations, stability
+
+```{r figs, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:figs}plotting example"}
+source("SIER_dogs_humans.R")
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+
+```
+
+## Stray +  Domestic + human
+
+MI : equations
+
+MC : plots
+
+## Seasonal
+
+MI : equation
+MC : plots
+
+## Patch
+
+MI: eq
+MC: plot
+
+# New stuff
+
+MC : eq, plots, flow
+
+## Patch + stray
+
+## Patch + stray + seasonal
+
+# Conclusion
+
+MI
+
+\begin{thebibliography}{1}
+	
+	%Formato PLOS	
+	
+	\bibitem{Wang}Wang L, Tang Q, Liang G. Rabies and rabies virus in wildlife in mainland China, 1990-2013. Int J Infect Dis. 2014; 25:122-9.
+	
+	\bibitem{Schnell}Schnell MJ, McGettigan JP, Wirblich C, Papaneri A. The cell biology of rabies virus: using stealth to reach the brain. Nat Rev Microbiol. 2010; 8(1):51-61.
+	
+	\bibitem{Velasco}Velasco-Villa A, Escobar LE, Sanchez A, Shi M, Streicker DG, Gallardo-Romero NF, Vargas-Pino F, Gutierrez-Cedillo V, Damon I, Emerson G. Successful strategies implemented towards the elimination of canine rabies in the Western Hemisphere. Antiviral Res. 2017; 143:1-12.
+	
+	\bibitem{Hemachudha}Hemachudha T, Ugolini G, Wacharapluesadee S, Sungkarat W, Shuangshoti S, Laothamatas J. Human rabies: neuropathogenesis, diagnosis, and management. Lancet Neurol. 2013; 12(5):498-513.
+	
+\end{thebibliography}

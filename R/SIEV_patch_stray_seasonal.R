@@ -168,3 +168,4 @@ ggplot(data = as.data.frame(SEIR_out)) +
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h_1), color = "blue") + 
   geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
