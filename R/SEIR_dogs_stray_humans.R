@@ -115,15 +115,15 @@ ggplot(data = as.data.frame(SEIR_out)) +
 
 p<-as.list(c(init[1],12*pars))
 
-R0<-with(p,(beta*p[[1]]*sigma*gamma)/((m+k+sigma)*(m+mu)))
+#R0<-with(p,(beta*p[[1]]*sigma*gamma)/((m+k+sigma)*(m+mu)))
 
-I_d_star<-with(p,(m+sigma+k)*(m+lambda+k)*m*(R0-1)/(beta*(m*(m+lambda+k)+sigma*gamma*(m+lambda))))
-
-denominatore<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m+k+sigma*gamma))-beta_h*I_d_star*lambda_h*k_h)
-
-denominatore2<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m_h+k_h+sigma_h*gamma_h))-beta_h*I_d_star*lambda_h*k_h)
-
-
-E_h_star<-with(p,(beta_h*B*(m_h+lambda_h)*I_d_star)/(denominatore2))
-
-I_h_star<-with(p,sigma_h*gamma_h*E_h_star/((m_h+mu_h)))
+# I_d_star<-with(p,(m+sigma+k)*(m+lambda+k)*m*(R0-1)/(beta*(m*(m+lambda+k)+sigma*gamma*(m+lambda))))
+# 
+# denominatore<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m+k+sigma*gamma))-beta_h*I_d_star*lambda_h*k_h)
+# 
+# denominatore2<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m_h+k_h+sigma_h*gamma_h))-beta_h*I_d_star*lambda_h*k_h)
+# 
+# 
+# E_h_star<-with(p,(beta_h*B*(m_h+lambda_h)*I_d_star)/(denominatore2))
+# 
+# I_h_star<-with(p,sigma_h*gamma_h*E_h_star/((m_h+mu_h)))

@@ -1,29 +1,19 @@
 ---
-title: "Rabies"
-date: "`r Sys.Date()`"
-author:
--   name: Matteo Ciciani
-    affiliation: &aff Centre for Integrative Biology (CIBIO), University of
-        Trento, Italy
--   name: Martina Iannacito
-    affiliation: *aff
+title: SIER model for rabies in China
+author: Martina Iannacito\textsuperscript{1} and Matteo Ciciani\textsuperscript{2}
+affiliation:
+  - \textsuperscript{1}\textit{...}
+  - \textsuperscript{2}\textit{Quantitative and Computational Biology Master, University of Trento, Italy}
+  
 output:
-    BiocStyle::pdf_document:
-      fig_caption: yes
-vignette: >
-    %\VignetteIndexEntry{Signature-based Clustering for Diagnostic Purposes}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
+    pdf_document:
+      latex_engine: xelatex
+      template: SelfArx-template.tex
+abstract: Here is the abstract
 ---
+# Introduction
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-# Intro
-
-## Rabies
-
+## The biology of rabies
 Rabies is one of the oldest diseases in recorded human history, dating back more
 than 4000 years. More than 70000 human rabies deaths occur annually, and Asia
 accounts for approximately 80\% of the worldwide total \cite{Wang}. As 40\% of
@@ -79,7 +69,7 @@ five doses of immunization with inactivated rabies virus vaccines. This regimen
 is effective, but its usefulness in developing countries, where rabies is
 endemic, is hampered by the high cost and lack of compliance \cite{Schnell}.
 
-## SEIR
+## SEIR models
 
 Nowadays mathematics is used in different scientific areas. As a matter of fact
 mathematical models are commonly applied to investigate the evolution of
@@ -93,23 +83,16 @@ assumption demographical aspects are negligible and consequently the model focus
 only on the disease dynamic. In order to apply the model the total population
 $N(t)$ at time t is split into four class:
 
-- $S(t)$ : it is the class of susceptible to the disease at time t;
-- $E(t)$ : it is the class of exposed to the pathogen and not contagious at time
+$S(t)$ : it is the class of susceptible to the disease at time t;
+$E(t)$ : it is the class of exposed to the pathogen and not contagious at time
 t;
-- $I(t)$ : it is the class of infectuous at time t;
-- $R(t)$ : it is the class of removed, i.e. those who get out of the model
+$I(t)$ : it is the class of infectuous at time t;
+$R(t)$ : it is the class of removed, i.e. those who get out of the model
 because they are dead or they have become immune at time t.
 
-$$
-\begin{cases}
-x = 1+1\\
-y = 3
-\end{cases}
-$$
-
 Then it is assumed that susceptible ones who come into contact with infected
-become exposed at rate $\lambda(t)$ , exposed move into the infectuous class at rate
-$k(t)$ and at last infectous are removed at rate $\gamma(t)$ . The force of
+become exposed at rate $\lambda(t)$ , exposed move into the infectuous class at
+rate $k(t)$ and at last infectous are removed at rate $\gamma(t)$ . The force of
 infection $\lambda(t)$ is mathematically described as:
 
 $$
@@ -124,10 +107,12 @@ time and thanks to the absence of demographic aspects also the total population
 is constant. Therefore the SEIR ode system is:
 
 \begin{align}
-  \label{1}
+  \label{s1}
   \begin{cases}
-    x = 1+1\\
-    y = 3
+    S'(t) = -\frac{c\chi}{N}S(t)I(t)\\
+    E'(t) = \frac{c\chi}{N}S(t)I(t)-kE(t)\\
+    I'(t) = kE(t)-\gamma I(t)\\
+    R'(t) =\gamma I(t)
   \end{cases}
 \end{align}
 
@@ -141,7 +126,100 @@ $$
 R_0 = \frac{c\chi}{\gamma}
 $$
 
-Add other systems
+It is possible to obtain a simpler system rescaling \ref{s1} in the following
+way $\tau = \gamma t$, $u(t) =\frac{S(t)}{N}$, $v(t) = \frac{E(t)}{N}$, $w(t) =
+\frac{I(t)}{N}$ and $z(t) =\frac{R(t)}{N}$. Thanks to the applied rescalation,
+it follows that $u+v+w+z=\frac{S+E+I+R}{N}=1$. Denoting
+$\dot{u}=\frac{du}{d\tau}$, the system (\ref{s1}) becomes:
+\begin{align*}
+	\begin{cases}
+		\dot{u}(\tau) =-\frac{c\chi}{\gamma}u(\tau)w(\tau)\\
+		\dot{v}(\tau) = \frac{c\chi}{\gamma}u(\tau)w(\tau)-\rho v(\tau)\\
+		\dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
+		\dot{z}(\tau) = w(\tau)
+	\end{cases}
+\end{align*}
+
+which is equivalent to
+\begin{align}
+	\label{s2}
+	\begin{cases}
+		\dot{u}(\tau) = -R_0u(\tau)u(\tau)w(\tau)\\
+		\dot{v}(\tau) = R_0u(\tau)w(\tau)-\rho v(\tau)\\
+		\dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
+		\dot{z}(\tau) = w(\tau).
+	\end{cases}
+\end{align}
+
+It can be proved as in \cite{mate1} that given positive initial condition for
+the system (\ref{s2}) there is a unique positive solution.\\ In order to make
+more realistic the model it is convenient to introduce a simple vital dynamic
+with $\mu$ death rate equal to $\beta$ birth rate. Under this hypothesis the
+population is still constant in time. The produced system is:
+\begin{align}
+  \label{s3}
+	\begin{cases}
+    \dot{u}(\tau) = -R_0u(\tau)u(\tau)w(\tau)+\beta(1-u(\tau))\\
+    \dot{v}(\tau) = R_0u(\tau)w(\tau)-(\rho+\beta)v(\tau)\\
+    \dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
+    \dot{z}(\tau) = w(\tau)-\beta z.
+  \end{cases}
+\end{align}
+
+Reminding that $u+v+z+w=1$, it is easy to compute the equilibria of the system
+(\ref{s3}), that are:
+\begin{itemize}
+	\item the disease free equilibrium $E_0=(1,0,0,0)$;
+	\item the endemic equilibrium $E^*=(u^*,v^*,w^*,z^*)$, that exists if and only
+	if holds the condition
+	\begin{equation}
+  	\label{c1}
+  	R_0>1+\frac{\beta}{\rho}
+	\end{equation}
+\end{itemize}
+
+To investigate the stability of the equilibria, it is useful to consider the
+jacobian of the reduced system:
+\begin{align*}
+	\begin{cases}
+  	\dot{u}(\tau)=-R_0u(\tau)u(\tau)w(\tau)+\beta(1-u(\tau))\\
+  	\dot{v}(\tau) = R_0u(\tau)w(\tau)-(\rho+\beta)v(\tau)\\
+  	\dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
+	\end{cases}
+\end{align*}
+
+For the disease free equilibrium the Jacobian is
+$$
+J(E_0)=\begin{bmatrix} 
+-\beta & 0  & -R_0 \\ 
+0 &	-(\rho+\beta)	& R_0\\
+0 &	\rho	& -1\\
+\end{bmatrix}
+$$
+
+It can be observed that it is a block matrix. Consequently an eigenvalue is
+$\lambda_1=-\beta$, the other ones are the eigenvalues of the matrix
+$$
+J(E_0)=\begin{bmatrix} 
+-(\rho+\beta)	& R_0\\
+\rho	& -1\\
+\end{bmatrix}
+$$
+which has negative trace and positive determinant it the condition (\ref{c1})
+is false. For the endemic equilibrium the Jacobian is
+$$
+J(E^*)=\begin{bmatrix} 
+-(R_0w^*+\beta) & 0  & -R_0u^* \\ 
+R_0w^* &	-(\rho+\beta)	& R_0u^*\\
+0 &	\rho	& -1\\
+\end{bmatrix}.
+$$
+Using the Routh-Hurwitz conditions, it can be proved as in \cite{mate1} that the
+endemic equilibrium, when it exists, is asymptotically stable.
+
+The basic structure of the SEIR system can be adequately modified and used to
+describe the rabies epidemic behavior as in \cite{PAPERNOSTRO?}.
+
 
 Apply SEIR to rabies in China
 
@@ -152,7 +230,7 @@ Apply SEIR to rabies in China
 
 MI : equations, stability
 
-```{r figs, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:figs}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
 source("SIER_dogs_humans.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
@@ -166,10 +244,26 @@ MI : equations
 
 MC : plots
 
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+source("SIER_dogs_stray_humans.R")
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+
+```
+
 ## Seasonal
 
 MI : equation
 MC : plots
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+source("SIER_seasonal.R")
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+
+```
 
 ## Patch
 
