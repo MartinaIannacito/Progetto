@@ -4,7 +4,6 @@ author: Martina Iannacito\textsuperscript{1} and Matteo Ciciani\textsuperscript{
 affiliation:
   - \textsuperscript{1}\textit{...}
   - \textsuperscript{2}\textit{Quantitative and Computational Biology Master, University of Trento, Italy}
-  
 output:
     pdf_document:
       latex_engine: xelatex
@@ -279,7 +278,7 @@ The complete expression of $E^*$ in function of the parameters can be found in
 locally asymptotically stable in the region
 
 \begin{align*}
-  \Gamma=&\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in(\mathbb{R}_+\cup\{0\})^8\vert\\
+  \Gamma=&\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in(\mathbb{R}_+\cup\{0\})^8~\vert\\
   &0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\Bigr\}\\
 \end{align*}
 
@@ -287,7 +286,7 @@ Moreover if \ref{c2} holds, it can be shown that $E*$ is locally asymptotically
 stable in $\hat{\Gamma}=\Gamma-\Sigma$, where
 
 $$
-\Sigma=\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in\Gamma\vert I_h=0\Bigr\}
+\Sigma=\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in\Gamma~\vert~I_h=0\Bigr\}
 $$
 and all the solution in $\Sigma$ tend toward the disease free equilibrium. A
 complete demonstration of the previous statement can be found in
@@ -300,11 +299,24 @@ through reduction of the annual crop of puppies and increasing the dog
 immunization rate.
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
+library(latex2exp)
 source("SEIR_dogs_humans.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme + 
+  ylab(TeX("$I_h$")) + xlab("time (months)")
+```
 
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
+ggplot(data = I_h_df_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_d(0)$")) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
+ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_h(0)$")) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)")
 ```
 
 ## Stray +  Domestic + human
@@ -349,12 +361,12 @@ be presented as:
 	
 It can be proved that set 
 \begin{align*}
-  X=&\Bigl\{(S_0, E_0, I_0,V_0, S_1, E_1, I_1,V_1, S_h, E_h, I_h,V_h )\in\mathbb{R}_+^{12}\vert\\
+  X=&\Bigl\{(S_0, E_0, I_0,V_0, S_1, E_1, I_1,V_1, S_h, E_h, I_h,V_h )\in\mathbb{R}_+^{12}~\vert\\
   &E_0, I_0, E_1, I_1, E_h, I_h,V_h\in\mathbb{R}_+\cup\{0\}\Bigr\}\\
 \end{align*}
 the region
 \begin{align*}
-\Gamma =&\Bigl\{p\in X \vert S_0 + E_0 + I_0 + V_0 + S_1 + E_1 + I_1 +\\
+\Gamma =&\Bigl\{p\in X~\vert~S_0 + E_0 + I_0 + V_0 + S_1 + E_1 + I_1 +\\
 & V_1 + S_h + E_h +I_h+V_h\le\frac{A+H}{\min\{\mu + c, d,\mu_h\}}\Bigr\}\\
 \end{align*}
 is positively invariant.
@@ -362,7 +374,7 @@ is positively invariant.
 It is proved that there are two equilibria 
 \begin{itemize}
 	\item a disease free equilibrium
-	$E_0=(S_{0,0},0,0,V_{0,0},S_{1,0},0,0,V_{1,0},S_{h,0},0,0,0)$ where the
+	$E_0=(S_{0,0},0,0,V_{0,0},S_{1,0},0,0,$ $V_{1,0},S_{h,0},0,0,0)$ where the
 	complete expression is reported in \cite{paperNostro};
 	\item an endemic equilibrium $E*$ whose expression is  to complicate to
 	formally compute, which can be proved to exist if $R_0>1$\cite{papernostro}.
@@ -376,8 +388,30 @@ asymptotically stable for the system \ref{s4}.
 source("SEIR_dogs_stray_humans.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme +
+  ylab(TeX("$I_h$")) + xlab("time (months)")
+```
 
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = TeX("$l$, $\\epsilon$"), labels = labels_1) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "", labels = c(
+    "No intervention", "50% stray dog culling", "100% stray dog culling",
+    "50% vaccination", "70% vaccination")) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
+  xlab("time (months)") + guides(col = guide_legend(nrow = 3))
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+ggplot(data = I_h_df_long_3, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = TeX("$\\nu_h$"), labels = nu_h_vect) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
 ```
 
 ## Seasonal
@@ -414,7 +448,7 @@ $$
 
 it can be proved that there is a positively invariant region
 \begin{align*}
-\Gamma =&\Bigl\{p\in X \vert 0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\text{ and }\\
+\Gamma =&\Bigl\{p\in X~\vert~0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\text{ and }\\
 &0 < S_h + E_h + I_h + R_h \le \frac{B}{m_h}\Bigr\}\\
 \end{align*}
 It is proved that the system \ref{s5} has 
@@ -429,9 +463,30 @@ It is proved that the system \ref{s5} has
 source("SEIR_seasonal.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_h), color = "red") + myTheme
-
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme + 
+  ylab(TeX("$I_h$")) + xlab("time (months)")
 ```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+ggplot(data = as.data.frame(SEIR_out_2)) +
+  geom_line(mapping = aes(time, I_h), color = "red") + myTheme + 
+  ylab(TeX("$I_h$")) + xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = TeX("$S_d(0)$")) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = TeX("$I_d(0)$")) +
+  myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
 
 ## Patch
 

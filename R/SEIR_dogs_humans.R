@@ -26,7 +26,7 @@ pars <- c(
   A = 3 * 10^6, # month^(-1) <-
   lambda = 1, # month^(-1) <-
   sigma = 6, # monrt^(-1)
-  gamma = 12*0.4, # pure number
+  gamma = 0.4*12, # pure number
   m = 0.08, # same
   mu = 1, # same
   k = 0.09, # same
@@ -39,7 +39,7 @@ pars <- c(
   beta_h = 2.29 * 10^(-12),
   k_h = 0.54,
   mu_h = 1
-) / 12
+)/12
 
 # pars <- c(
 #   A = 2.34 * 10^5, # month^(-1)
@@ -55,7 +55,7 @@ pars <- c(
 init <- c(S_d = 3.5 * 10 ^ 7, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
   R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5)
 #init <- c(S_d = 3.5 * 10^2, E_d = 0, I_d = 1, R_d = 0)
-times <- seq(1, 50 * 12, by = 1)
+times <- seq(1, 50*12, by = 1)
 SEIR_out <- ode(init, times, SEIR, pars)
 
 myTheme <- theme(axis.text = element_text(size = 20),
@@ -68,7 +68,9 @@ myTheme <- theme(axis.text = element_text(size = 20),
   panel.grid.major = element_line(colour = "grey90"),
   panel.grid.minor = element_line(colour = "grey90"),
   axis.line = element_line(color = "black", size = .7),
-  plot.title = element_text(hjust = 0.5, size = 25))
+  plot.title = element_text(hjust = 0.5, size = 25),
+  legend.text = element_text(size = 13),
+  legend.title= element_text(size = 15))
 
 # Dogs
 
@@ -134,21 +136,40 @@ S_d_vect <- c(4, 3, 2, 1, 0.5, 0.3) *10^7
 ode_system <- function(S_d_init) {
   init <- c(S_d = S_d_init, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
     R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5)
-  #init <- c(S_d = 3.5 * 10^2, E_d = 0, I_d = 1, R_d = 0)
+  times <- seq(1, 80 * 12, by = 1)
   ode(init, times, SEIR, pars)
 }
 
 res <- lapply(S_d_vect, ode_system)
-cols <- grDevices::rainbow(length(res))
 
-infected_h <- lapply(seq_along(res), function(i)
-  geom_line(data = as.data.frame(res[[i]]),
-    mapping = aes(time, I_h), color = cols[i]))
+I_h_df <- as.data.frame(lapply(res, `[`, , "I_h"))
+colnames(I_h_df) <- S_d_vect
+I_h_df <- cbind(I_h_df, time = res[[1]][,"time"])
+I_h_df_long <- reshape2::melt(I_h_df, id = "time")
 
-add_geoms <- function(l) {
-  g <- ggplot()
-  for (geom in l) g <- g + geom
-  g
+ggplot(data = I_h_df_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_d(0)$")) +
+  myTheme
+
+# Same thing for different S_h(0)
+
+S_h_vect <- c(3, 2, 1.2, 0.5) *10^9
+
+ode_system_2 <- function(S_h_init) {
+  init <- c(S_d = 3.5 * 10 ^ 7, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
+    R_d = 2 * 10 ^ 5, S_h = S_h_init, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5)
+  times <- seq(1, 80 * 12, by = 1)
+  ode(init, times, SEIR, pars)
 }
 
-add_geoms(infected_h) + guides(color = "colorbar") + myTheme
+res_2 <- lapply(S_h_vect, ode_system_2)
+
+I_h_df_2 <- as.data.frame(lapply(res_2, `[`, , "I_h"))
+colnames(I_h_df_2) <- S_h_vect
+I_h_df_2 <- cbind(I_h_df_2, time = res[[1]][,"time"])
+I_h_df_long_2 <- reshape2::melt(I_h_df_2, id = "time")
+
+ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_h(0)$")) +
+  myTheme
+

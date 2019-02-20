@@ -42,7 +42,7 @@ pars <- c(
   d = 0.11,
   nu = 0.133,
   k = 0.79,
-  h = 10^6,
+  # h = 10^6,
   mu_h = 4.6*10^(-3),
   lambda_1 = 3.6*10^(-9), # month^(-1)
   lambda_2 = 4.8*10^(-10),
@@ -52,7 +52,7 @@ pars <- c(
   nu_h = 0.328,
   alpha_h = 1,
   H = 10 ^ 6
-)/ 12
+)/12
 
 
 
@@ -60,7 +60,7 @@ init <- c(S_0 = 4 * 10 ^ 4, E_0 = 4 * 10 ^ 2, I_0 = 2.04 * 10 ^ 3, V_0 = 0,
           S_1 = 2.4 * 10 ^ 6, E_1 = 2.9 * 10 ^ 4, I_1 = 2 * 10 ^ 4, V_1 = 6 * 10 ^ 5,
           S_h = 7.988 * 10 ^ 7, E_h = 7.13 * 10 ^ 2, I_h = 3.87 * 10 ^ 2, V_h = 6 * 10 ^ 5)
 
-times <- seq(1, 100*12, by = 1)
+times <- seq(1, 8*12, by = 1)
 SEIR_out <- ode(init, times, SEIR, pars)
 
 myTheme <- theme(axis.text=element_text(size=20),
@@ -73,7 +73,9 @@ myTheme <- theme(axis.text=element_text(size=20),
   panel.grid.major = element_line(colour = "grey90"),
   panel.grid.minor = element_line(colour = "grey90"),
   axis.line = element_line(color = "black", size = .7),
-  plot.title = element_text(hjust = 0.5, size = 25))
+  plot.title = element_text(hjust = 0.5, size = 25),
+  legend.text = element_text(size = 13),
+  legend.title= element_text(size = 15))
 
 # Dogs
 
@@ -113,17 +115,83 @@ ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_d), color = "red") + 
   geom_line(mapping = aes(time, R_d), color = "green") + myTheme
 
-p<-as.list(c(init[1],12*pars))
+################################################################################
+# USE DIFFERENT PARAMETER VALUES
+################################################################################
 
-#R0<-with(p,(beta*p[[1]]*sigma*gamma)/((m+k+sigma)*(m+mu)))
+l_vect <- c(0.008, 0.02, 0.014, 0.014)
+epsilon_vect <- c(0.1, 0.1, 0.08, 0.12)
 
-# I_d_star<-with(p,(m+sigma+k)*(m+lambda+k)*m*(R0-1)/(beta*(m*(m+lambda+k)+sigma*gamma*(m+lambda))))
-# 
-# denominatore<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m+k+sigma*gamma))-beta_h*I_d_star*lambda_h*k_h)
-# 
-# denominatore2<-with(p,(m_h+lambda_h)*(m_h*(m_h+k_h+sigma_h)+beta_h*I_d_star*(m_h+k_h+sigma_h*gamma_h))-beta_h*I_d_star*lambda_h*k_h)
-# 
-# 
-# E_h_star<-with(p,(beta_h*B*(m_h+lambda_h)*I_d_star)/(denominatore2))
-# 
-# I_h_star<-with(p,sigma_h*gamma_h*E_h_star/((m_h+mu_h)))
+ode_system_1 <- function(l, epsilon) {
+  pars["l"] <- l/12
+  pars["epsilon"] <- epsilon/12
+  times <- seq(1, 10*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_1 <- lapply(1:4, function(i) ode_system_1(l_vect[i], epsilon_vect[i]))
+
+I_h_df_1 <- as.data.frame(lapply(res_1, `[`, , "I_h"))
+colnames(I_h_df_1) <- 1:4
+I_h_df_1 <- cbind(I_h_df_1, time = res_1[[1]][,"time"])
+I_h_df_long_1 <- reshape2::melt(I_h_df_1, id = "time")
+
+make_label <- function(l, epsilon) {
+  paste0(l, ", ", epsilon)
+}
+
+labels_1 <- sapply(1:4, function(i) make_label(l_vect[i], epsilon_vect[i]))
+
+ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
+  geom_line() +
+  myTheme
+
+#-------------------------------------------------------------------------------
+
+c_vect <- c(0, 0.5, 1, 0.5, 0.5)
+nu_vect <- c(0, 0, 0, 0.5, 0.7)
+
+ode_system_2 <- function(c, nu) {
+  pars["c"] <- c/12
+  pars["nu"] <- nu/12
+  times <- seq(1, 10*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_2 <- lapply(1:5, function(i) ode_system_2(c_vect[i], nu_vect[i]))
+
+I_h_df_2 <- as.data.frame(lapply(res_2, `[`, , "I_h"))
+colnames(I_h_df_2) <- 1:5
+I_h_df_2 <- cbind(I_h_df_2, time = res_2[[1]][,"time"])
+I_h_df_long_2 <- reshape2::melt(I_h_df_2, id = "time")
+
+make_label <- function(c, nu) {
+  paste0(c, ", ", nu)
+}
+
+labels_2 <- sapply(1:5, function(i) make_label(c_vect[i], nu_vect[i]))
+
+ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
+  geom_line()  +
+  myTheme
+
+#-------------------------------------------------------------------------------
+
+nu_h_vect <- c(0.6, 0.9, 1)
+
+ode_system_3 <- function(nu_h) {
+  pars["nu_h"] <- nu_h/12
+  times <- seq(1, 10*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_3 <- lapply(nu_h_vect, ode_system_3)
+
+I_h_df_3 <- as.data.frame(lapply(res_3, `[`, , "I_h"))
+colnames(I_h_df_3) <- 1:3
+I_h_df_3 <- cbind(I_h_df_3, time = res_3[[1]][,"time"])
+I_h_df_long_3 <- reshape2::melt(I_h_df_3, id = "time")
+
+ggplot(data = I_h_df_long_3, aes(x = time, y = value, colour = variable)) +
+  geom_line()  +
+  myTheme
