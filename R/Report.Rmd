@@ -82,13 +82,14 @@ individ- ual takes on average more than the duration of the flu. Under this
 assumption demographical aspects are negligible and consequently the model focus
 only on the disease dynamic. In order to apply the model the total population
 $N(t)$ at time t is split into four class:
-
-$S(t)$ : it is the class of susceptible to the disease at time t;
-$E(t)$ : it is the class of exposed to the pathogen and not contagious at time
-t;
-$I(t)$ : it is the class of infectuous at time t;
-$R(t)$ : it is the class of removed, i.e. those who get out of the model
-because they are dead or they have become immune at time t.
+\begin{itemize}
+  \item $S(t)$ : it is the class of susceptible to the disease at time t;
+  \item $E(t)$ : it is the class of exposed to the pathogen and not contagious
+  at time t;
+  \item $I(t)$ : it is the class of infectuous at time t;
+  \item $R(t)$ : it is the class of removed, i.e. those who get out of the model
+  because they are dead or they have become immune at time t.
+\end{itemize}
 
 Then it is assumed that susceptible ones who come into contact with infected
 become exposed at rate $\lambda(t)$ , exposed move into the infectuous class at
@@ -220,18 +221,86 @@ endemic equilibrium, when it exists, is asymptotically stable.
 The basic structure of the SEIR system can be adequately modified and used to
 describe the rabies epidemic behavior as in \cite{PAPERNOSTRO?}.
 
-
-Apply SEIR to rabies in China
-
 # Reproduction of original results
 
 
 ## Dog + humans 
 
-MI : equations, stability
+As it has been pointed out in the biological introduction to rabies, after the
+bite of an infect dog, the virus has an incubation period. Consequently the
+bitten human can be considered exposed. It is therefore appropriate to describe
+this epidemic phenomena through a SEIR model for the dogs and the human
+population. The most important difference with the classical SEIR is that in
+this model only the exposed which are subjected to prophylactic measures moves
+into the removed class. Besides the removed ones can loose immunity and get back
+to susceptible class.
+
+\begingroup
+\setlength{\mathindent}{0pt}
+\begin{align*}
+	\begin{cases}
+		S_d'(t) = A + \lambda_dR_d + \sigma_d (1 - \gamma_d )E_d - \beta_d S_dI_d - (m_d + k_d)S_d\\
+		E_d'(t) = \beta_d S_dI_d - \sigma_d (1 - \gamma_d )E_d - \sigma_d\gamma_d E_d - (m_d + k_d)E_d\\
+		I_d'(t) = \sigma_d\gamma_d E_d - (m_d + \mu_d)I_d\\
+		R_d'(t) = k(S_d + E_d) - (m_d + \lambda_d)R_d\\
+		S_h'(t) = B + \lambda_hR_h + \sigma_h(1 - \gamma_h )E_h - m_hS_h - \beta_{dh}S_hI_h\\
+		E_h'(t) = \beta_{dh}S_hI_d - \sigma_h(1 - \gamma_h )E_h - \sigma_h\gamma_hE_h - (m_h + k_h )E_h\\
+		I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\\
+		R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h
+	\end{cases}
+\end{align*}
+\endgroup
+
+The flow chart of the model and the correspective parameters value are reported
+in \cite{paperCINA}. The system presents both the vitality and the epidemic
+dynamic. It is important to underline that it has been added with respet to the
+original SEIR the rate of loss of immunity for the dogs population. It can be
+computed, as in \cite{23,96PapCinaBio} the basic epidemic reproduction number
+as:
+$$
+R_0=\frac{\beta_d\sigma_d\gamma_d}{(m_d+\kappa_d+\sigma_d)(m_d+\mu_d)}\frac{(m_d
++\lambda_d)A}{(m_d+\kappa_d+\lambda_d)m_d}
+$$
+
+Moreover it can be proved that there are two equilibria:
+\begin{itemize}
+	\item a disease free equilibrium $E_0=(S_{d,0},0,0,R_{d,0},S_{h,0},0,0,0)$;
+	\item an endemic equilibrium
+	$E^*=(S^*_d,E^*_d,I^*_d,R^*_{d},S^*_{h},E^*_h,I^*_h,R^*_h)$ which exists if 
+	and only if holds the condition
+	\begin{equation}
+		\label{c2}
+		R_0>1.
+	\end{equation}
+\end{itemize}
+
+The complete expression of $E^*$ in function of the parameters can be found in
+\cite{paperCINA}. If the condition \ref{c2} is it can be proved that $E_0$ is
+locally asymptotically stable in the region
+
+\begin{align*}
+  \Gamma=&\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in(\mathbb{R}_+\cup\{0\})^8\vert\\
+  &0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\Bigr\}\\
+\end{align*}
+
+Moreover if \ref{c2} holds, it can be shown that $E*$ is locally asymptotically
+stable in $\hat{\Gamma}=\Gamma-\Sigma$, where
+
+$$
+\Sigma=\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in\Gamma\vert I_h=0\Bigr\}
+$$
+and all the solution in $\Sigma$ tend toward the disease free equilibrium. A
+complete demonstration of the previous statement can be found in
+\cite{113papCinaBio}.\\ At last a simulation of the model can be realized using
+the data collected by the Chinese Ministry of Health. After a complete analysis
+was performed, the researchers could show that the $R_0$ value in China is
+around $1.2$. Therefore the epidemic moves toward the endemic equilibrium. But
+the analysis was able to suggest possible ways of controlling the epidemic,
+through reduction of the annual crop of puppies and increasing the dog
+immunization rate.
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
-source("SIER_dogs_humans.R")
+source("SEIR_dogs_humans.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme
@@ -240,12 +309,71 @@ ggplot(data = as.data.frame(SEIR_out)) +
 
 ## Stray +  Domestic + human
 
-MI : equations
+Although the previous model provided a good estimation of the Chinese rabies
+epidemic dynamic of the last years, it is not completely satisfactory. As a
+matter of fact almost every region of China is populated by stray dogs.
+Consequently it is useful to introduce another model, where the parameters of
+stray and domestic dogs are distinctly estimated.
 
-MC : plots
+The simplest formulation of this stray-domestic-human system is realized through
+a SEIV with demographic dynamic at constant coefficients. In the SEIV model the
+removed class is replaced by the vaccinated class. In this case it is assumed
+that only susceptible and exposed domestic flow with a specific rate in the
+vaccinated class. Moreover it is assumed that domestic dogs can be abandoned nd
+consequently the become stray in the respective class. It is also assumed that
+only domestic dogs reproduce themself and that the stray dogs of all class are
+culled at the same rate. For the human population it is coherently supposed that
+only exposed ones are treated and so they move in the vaccinated class. It can
+be presented as:
+
+\begingroup
+\setlength{\mathindent}{0pt}
+\begin{align}
+	\label{s4}
+	\begin{cases}
+		S_0'(t) = lS_1 - (\mu + c)S_0 - \beta_0S_0I_0 + p_0E_0 + \delta_1V_0\\
+		E_0'(t) = lE_1 + \beta_0S_0I_0 - (\mu + c + \sigma_0 + p_0)E_0\\
+		I_0'(t) = \sigma_0E_0 + I_1 - (\mu + c + \alpha)I_0\\
+		V_0'(t) = lV_1 - (\mu + c + \delta_1)V_0\\
+		S_1'(t) = A - \beta S_1I_0 - \beta_1S_1I_1 - (1 + \nu + l)S_1 + p_1E_1 + \delta2V_1\\
+		E_1'(t) = \beta S_1I_0 + \beta_1S_1I_1 - (1 + \nu + \sigma_1 + l + p_1)E_1\\
+		I_1'(t) = \sigma_1E_1 - (1 +  + k)I_1\\
+		V_1'(t) = \nu(S_1 + E_1) - (1 + l + \delta_2)V_1\\
+		S_h'(t) = H - \mu_hS_h - \lambda_{1h}S_hI_0 - \lambda_{2h}S_hI_1 + \delta_{1h}Eh + \delta_{2h}V_h\\
+		E_h'(t) =\lambda_{1h}S_hI_0 + \lambda_{2h}S_hI_1 - (\mu_h + \sigma_h + \delta_{1h} + \nu_h)E_h\\
+		I_h'(t) = \sigma_hE_h - (\mu_h + \alpha_h )I_h\\
+		V_h'(t) = \nu_hE_h - (\mu_h + \delta_{2h})V_h\\
+	\end{cases}
+\end{align}
+\endgroup
+	
+It can be proved that set 
+\begin{align*}
+  X=&\Bigl\{(S_0, E_0, I_0,V_0, S_1, E_1, I_1,V_1, S_h, E_h, I_h,V_h )\in\mathbb{R}_+^{12}\vert\\
+  &E_0, I_0, E_1, I_1, E_h, I_h,V_h\in\mathbb{R}_+\cup\{0\}\Bigr\}\\
+\end{align*}
+the region
+\begin{align*}
+\Gamma =&\Bigl\{p\in X \vert S_0 + E_0 + I_0 + V_0 + S_1 + E_1 + I_1 +\\
+& V_1 + S_h + E_h +I_h+V_h\le\frac{A+H}{\min\{\mu + c, d,\mu_h\}}\Bigr\}\\
+\end{align*}
+is positively invariant.
+
+It is proved that there are two equilibria 
+\begin{itemize}
+	\item a disease free equilibrium
+	$E_0=(S_{0,0},0,0,V_{0,0},S_{1,0},0,0,V_{1,0},S_{h,0},0,0,0)$ where the
+	complete expression is reported in \cite{paperNostro};
+	\item an endemic equilibrium $E*$ whose expression is  to complicate to
+	formally compute, which can be proved to exist if $R_0>1$\cite{papernostro}.
+\end{itemize}
+
+After having computed $R_0$, whose expression is presented in
+\cite{paperNostro}, it can be proved that if $R_0<1$, $E_0$ is is globally
+asymptotically stable for the system \ref{s4}.
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
-source("SIER_dogs_stray_humans.R")
+source("SEIR_dogs_stray_humans.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme
@@ -254,11 +382,51 @@ ggplot(data = as.data.frame(SEIR_out)) +
 
 ## Seasonal
 
-MI : equation
-MC : plots
+It is quite evident that the assumption of a constant recruitment rate it is not
+biologically plausible \cite{54biopapnostro}. Moreover it has been observed that
+also the contact rate and vaccination rate depends on time
+\cite{78,biopapnostro}. Therefore there is a periodic component in the rabies
+epidemic phenomenon that the previous model do not grasp. A new model has been
+presented to highlight the periodicity component. It is a SEIR model with
+periodic transmission rate:
+\begingroup
+\setlength{\mathindent}{0pt}
+\begin{align}
+	\label{s5}
+	\begin{cases}
+		S_d'(t) = A + \lambda_dR_d + \sigma_d (1 - \gamma_d )E_d - \beta_d(t) S_dI_d - (m_d + k_d)S_d\\
+		E_d'(t) = \beta_d(t) S_dI_d - \sigma_d (1 - \gamma_d )E_d - \sigma_d\gamma_d E_d - (m_d + k_d)E_d\\
+		I_d'(t) = \sigma_d\gamma_d E_d - (m_d + \mu_d)I_d\\
+		R_d'(t) = k(S_d + E_d) - (m_d + \lambda_d)R_d\\
+		S_h'(t) = B + \lambda_hR_h + \sigma_h(1 - \gamma_h )E_h - m_hS_h - \beta_{dh}(t)S_hI_h\\
+		E_h'(t) = \beta_{dh}(t)S_hI_d - \sigma_h(1 - \gamma_h )E_h - \sigma_h\gamma_hE_h - (m_h + k_h )E_h\\
+		I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\\
+		R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h
+	\end{cases}
+\end{align}
+\endgroup
+
+where $\beta_d(t)=a[1 + bsin( \frac{\pi}{6} t + 5.5)]$ and
+$\beta_{dh}(t)=a_1[1 + b_1sin( \frac{\pi}{6} t + 5.5)]$. Even in this case, set 
+$$
+X=\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in (\mathbb{R}_+\cup\{0\})^8\Bigr\}
+$$
+
+it can be proved that there is a positively invariant region
+\begin{align*}
+\Gamma =&\Bigl\{p\in X \vert 0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\text{ and }\\
+&0 < S_h + E_h + I_h + R_h \le \frac{B}{m_h}\Bigr\}\\
+\end{align*}
+It is proved that the system \ref{s5} has 
+\begin{itemize}
+	\item a disease free equilibrium $E_0=(S_{0},0,0,R_{0},S_{h},0,0,0)$ where the
+	complete expression is reported in \cite{paperNostro}, which is globally
+	asymptotically stable for $R_0<1$;
+	\item at least one positive periodic solution \cite{111paperNostroBio}.
+\end{itemize} 
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
-source("SIER_seasonal.R")
+source("SEIR_seasonal.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme
@@ -270,13 +438,40 @@ ggplot(data = as.data.frame(SEIR_out)) +
 MI: eq
 MC: plot
 
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+source("SEIV_patch.R")
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
+```
+
 # New stuff
 
 MC : eq, plots, flow
 
 ## Patch + stray
 
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+source("SEIV_patch_stray.R")
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
+```
+
 ## Patch + stray + seasonal
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+source("SEIV_patch_stray_seasonal.R")
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, I_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
+```
 
 # Conclusion
 

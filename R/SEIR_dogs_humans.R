@@ -124,3 +124,31 @@ denominatore2 <- with(p, (m_h + lambda_h) * (m_h * (m_h + k_h + sigma_h) +
 E_h_star <- with(p, (beta_h * B * (m_h + lambda_h) * I_d_star) / denominatore)
 
 I_h_star <- with(p, sigma_h * gamma_h * E_h_star / (m_h + mu_h))
+
+################################################################################
+# SOLVE SYSTEM WITH DIFFERENT INITIAL CONDITIONS
+################################################################################
+
+S_d_vect <- c(4, 3, 2, 1, 0.5, 0.3) *10^7
+
+ode_system <- function(S_d_init) {
+  init <- c(S_d = S_d_init, E_d = 2 * 10 ^ 5, I_d = 1 * 10 ^ 5,
+    R_d = 2 * 10 ^ 5, S_h = 1.29 * 10 ^ 9, E_h = 250, I_h = 89, R_h = 2 * 10 ^ 5)
+  #init <- c(S_d = 3.5 * 10^2, E_d = 0, I_d = 1, R_d = 0)
+  ode(init, times, SEIR, pars)
+}
+
+res <- lapply(S_d_vect, ode_system)
+cols <- grDevices::rainbow(length(res))
+
+infected_h <- lapply(seq_along(res), function(i)
+  geom_line(data = as.data.frame(res[[i]]),
+    mapping = aes(time, I_h), color = cols[i]))
+
+add_geoms <- function(l) {
+  g <- ggplot()
+  for (geom in l) g <- g + geom
+  g
+}
+
+add_geoms(infected_h) + guides(color = "colorbar") + myTheme
