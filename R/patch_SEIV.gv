@@ -127,6 +127,6 @@ digraph SEIV {
   
   Sd -> Ss [label = "l", constraint=false]
   Ed -> Es [label = "l", constraint=false]
-  Id -> Is [label = <l<SUB><FONT POINT-SIZE="12">I</FONT></SUB>>, constraint=false]
+  Id -> Is [label = <&epsilon;>, constraint=false]
   Vd -> Vs [label = "l", constraint=false]
 }
