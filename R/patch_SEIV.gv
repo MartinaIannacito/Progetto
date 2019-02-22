@@ -1,0 +1,132 @@
+digraph SEIV {
+  compound = true
+  rank = same
+  outputorder = nodesfirst
+  edge[arrowhead = vee]
+  node[fontsize = 18]
+  subgraph cluster_1 {
+    label = "Stray dogs"
+    labeljust = "c"
+    style = dashed
+    Vs [shape = box, label = <V<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Is [shape = box, label = <I<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Es [shape = box, label = <E<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Ss [shape = box, label = <S<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    s1 [shape = box, color = white, label = " "]
+    s2 [shape = box, color = white, label = " "]
+    s3 [shape = box, color = white, label = " "]
+    s4 [shape = box, color = white, label = " "]
+    s5 [shape = box, color = white, label = " "]
+    s6 [shape = box, color = white, label = " "]
+    s7 [shape = box, color = white, label = " "]
+    s8 [shape = box, color = white, label = " "]
+    s9 [shape = box, color = white, label = " "]
+    s10 [shape = box, color = white, label = " "]
+    s10 -> Ss [label = <A<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Vs -> Ss [label = <&lambda;<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Es -> Ss [label = <&sigma;<SUB><FONT POINT-SIZE="12">s,i</FONT>&nbsp;</SUB>(1-&gamma;<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>&nbsp;)>]
+    Ss -> Vs [label = <k<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Ss -> s9 [label = <m<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Ss -> Es [label = <&beta;<SUB><FONT POINT-SIZE="12">ss,i</FONT></SUB>&nbsp;I<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Ss -> Es [label = <&beta;<SUB><FONT POINT-SIZE="12">ds,i</FONT></SUB>&nbsp;I<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    s8 -> Ss [dir = "both", label = <&Rho;<SUP><FONT POINT-SIZE="12">S</FONT></SUP>>]
+    
+    Es -> Is [label = <&sigma;<SUB><FONT POINT-SIZE="12">s,i</FONT>&nbsp;</SUB>&gamma;<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Is -> s1 [label = <m<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    Is -> s2 [label = <&mu;<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    s3 -> Is [dir = "both", label = <&Rho;<SUP><FONT POINT-SIZE="12">I</FONT></SUP>>]
+    
+    s6 -> Vs [dir = "both", label = <&Rho;<SUP><FONT POINT-SIZE="12">V</FONT></SUP>>]
+    Vs -> s7 [label = <m<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>, constraint=false]
+    Es -> Vs [label = <k<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    
+    Es -> s4 [label = <m<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>, constraint=false]
+    s5 -> Es [dir = "both", label = <&Rho;<SUP><FONT POINT-SIZE="12">E</FONT></SUP>>]
+    s9 -> s4 [style = invis]
+    
+  }
+  subgraph cluster_2 {
+    label = "Domestic dogs"
+    labeljust = "c"
+    style = dashed
+    Vd [shape = box, label = <V<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Id [shape = box, label = <I<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Ed [shape = box, label = <E<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Sd [shape = box, label = <S<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    d1 [shape = box, color = white, label = " "]
+    d2 [shape = box, color = white, label = " "]
+    d3 [shape = box, color = white, label = " "]
+    d4 [shape = box, color = white, label = " "]
+    d5 [shape = box, color = white, label = " "]
+    d6 [shape = box, color = white, label = " "]
+    d7 [shape = box, color = white, label = " "]
+    d8 [shape = box, color = white, label = " "]
+    d9 [shape = box, color = white, label = " "]
+    d10 [shape = box, color = white, label = " "]
+    d10 -> Sd [label = <A<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Vd -> Sd [label = <&lambda;<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Ed -> Sd [label = <&sigma;<SUB><FONT POINT-SIZE="12">d,i</FONT>&nbsp;</SUB>(1-&gamma;<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>&nbsp;)>]
+    Sd -> Vd [label = <k<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Sd -> d9 [label = <m<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Sd -> Ed [label = <&beta;<SUB><FONT POINT-SIZE="12">dd,i</FONT></SUB>&nbsp;I<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Sd -> Ed [label = <&beta;<SUB><FONT POINT-SIZE="12">ds,i</FONT></SUB>&nbsp;I<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    d8 -> Sd [dir = "both", label = <&Phi;<SUP><FONT POINT-SIZE="12">S</FONT></SUP>>]
+    
+    Ed -> Id [label = <&sigma;<SUB><FONT POINT-SIZE="12">d,i</FONT>&nbsp;</SUB>&gamma;<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Id -> d1 [label = <m<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Id -> d2 [label = <&mu;<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    d3 -> Id [dir = "both", label = <&Phi;<SUP><FONT POINT-SIZE="12">I</FONT></SUP>>]
+    
+    d6 -> Vd [dir = "both", label = <&Phi;<SUP><FONT POINT-SIZE="12">V</FONT></SUP>>]
+    Vd -> d7 [label = <m<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Ed -> Vd [label = <k<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    
+    Ed -> d4 [label = <m<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>, constraint=false]
+    d5 -> Ed [dir = "both", label = <&Phi;<SUP><FONT POINT-SIZE="12">E</FONT></SUP>>]
+    d4 -> Id [style = invis]
+  }
+  subgraph cluster_3 {
+    label = "Humans"
+    labeljust = "c"
+    style = dashed
+    Vh [shape = box, label = <V<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Ih [shape = box, label = <I<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Eh [shape = box, label = <E<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    Sh [shape = box, label = <S<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>, style = filled, fillcolor = Gold]
+    h1 [shape = box, color = white, label = " "]
+    h2 [shape = box, color = white, label = " "]
+    h3 [shape = box, color = white, label = " "]
+    h4 [shape = box, color = white, label = " "]
+    h5 [shape = box, color = white, label = " "]
+    h6 [shape = box, color = white, label = " "]
+    h7 [shape = box, color = white, label = " "]
+    h8 [shape = box, color = white, label = " "]
+    h9 [shape = box, color = white, label = " "]
+    h10 [shape = box, color = white, label = " "]
+    h10 -> Sh [label = "B"]
+    Vh -> Sh [label = <&lambda;<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>]
+    Eh -> Sh [label = <&sigma;<SUB><FONT POINT-SIZE="12">h,i</FONT>&nbsp;</SUB>(1-&gamma;<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>&nbsp;)>]
+    Sh -> h9 [label = <m<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>]
+    Sh -> Eh [label = <&beta;<SUB><FONT POINT-SIZE="12">hd,i</FONT></SUB>&nbsp;I<SUB><FONT POINT-SIZE="12">d,i</FONT></SUB>>]
+    Sh -> Eh [label = <&beta;<SUB><FONT POINT-SIZE="12">hs,i</FONT></SUB>&nbsp;I<SUB><FONT POINT-SIZE="12">s,i</FONT></SUB>>]
+    h8 -> Sh [dir = "both", label = <&Psi;<SUP><FONT POINT-SIZE="12">S</FONT></SUP>>]
+    
+    Eh -> Ih [label = <&sigma;<SUB><FONT POINT-SIZE="12">h,i</FONT>&nbsp;</SUB>&gamma;<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>]
+    Ih -> h1 [label = <m<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>]
+    Ih -> h2 [label = <&mu;<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>]
+    h3 -> Ih [dir = "both", label = <&Psi;<SUP><FONT POINT-SIZE="12">I</FONT></SUP>>]
+    
+    h6 -> Vh [dir = "both", label = <&Psi;<SUP><FONT POINT-SIZE="12">V</FONT></SUP>>]
+    Vh -> h7 [label = <m<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>, constraint=false]
+    Eh -> Vh [label = <k<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>]
+    
+    Eh -> h4 [label = <m<SUB><FONT POINT-SIZE="12">h,i</FONT></SUB>>, constraint=false]
+    h5 -> Eh [dir = "both", label = <&Psi;<SUP><FONT POINT-SIZE="12">E</FONT></SUP>>]
+    h9 -> h4 [style = invis]
+  }
+  
+  Sd -> Ss [label = "l", constraint=false]
+  Ed -> Es [label = "l", constraint=false]
+  Id -> Is [label = <l<SUB><FONT POINT-SIZE="12">I</FONT></SUB>>, constraint=false]
+  Vd -> Vs [label = "l", constraint=false]
+}

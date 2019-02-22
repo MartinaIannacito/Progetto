@@ -31,9 +31,9 @@ SEIR <- function(t, state, pars) {
 }
 
 phi <- matrix(c(0, 0.05, 0.6, 0), nrow = 2)
-diag(phi) <- -rep(sum(phi), 2)
+diag(phi) <- -c(0.05, 0.6)
 psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
-diag(psi) <- -rep(sum(psi), 2)
+diag(psi) <- -c(0.32, 0.2)
 
 pars <- list(
   A = c(3, 5) * 10 ^ 5,
@@ -65,25 +65,25 @@ pars <- list(
 pars <- lapply(pars, "/", 12)
 
 init <- c(
-  S_d_1 = 2.4 * 10 ^ 6,
+  S_d_1 = 5 * 10 ^ 5,
   S_d_2 = 2.4 * 10 ^ 6,
-  E_d_1 = 2.9 * 10 ^ 4,
-  E_d_2 = 10 ^ 3,
-  I_d_1 = 2 * 10 ^ 4,
-  I_d_2 = 10 ^ 2,
-  V_d_1 = 6 * 10 ^ 5,
-  V_d_2 = 10 ^ 5,
-  S_h_1 = 7.988 * 10 ^ 7,
-  S_h_2 = 7.988 * 10 ^ 7,
-  E_h_1 = 7.13 * 10 ^ 2,
-  E_h_2 = 7.13 * 10 ^ 2,
-  I_h_1 = 20,
-  I_h_2 = 1,
-  V_h_1 = 6 * 10 ^ 5,
-  V_h_2 = 6 * 10 ^ 5
+  E_d_1 = 10 ^ 3,
+  E_d_2 = 2.9 * 10 ^ 4,
+  I_d_1 = 10 ^ 3,
+  I_d_2 = 5 * 10 ^ 4,
+  V_d_1 = 10 ^ 3,
+  V_d_2 = 2 * 10 ^ 4,
+  S_h_1 = 7.1 * 10 ^ 7,
+  S_h_2 = 3.8 * 10 ^ 7,
+  E_h_1 = 10,
+  E_h_2 = 5 * 10,
+  I_h_1 = 1,
+  I_h_2 = 20,
+  V_h_1 = 6 * 10 ^ 2,
+  V_h_2 = 6 * 10 ^ 2
 )
 
-times <- seq(1, 50 * 12, by = 1)
+times <- seq(1, 8 * 12, by = 1)
 SEIR_out <- ode(init, times, SEIR, pars)
 
 myTheme <- theme(axis.text = element_text(size = 20),
@@ -96,14 +96,49 @@ myTheme <- theme(axis.text = element_text(size = 20),
   panel.grid.major = element_line(colour = "grey90"),
   panel.grid.minor = element_line(colour = "grey90"),
   axis.line = element_line(color = "black", size = .7),
-  plot.title = element_text(hjust = 0.5, size = 25))
+  plot.title = element_text(hjust = 0.5, size = 25),
+  legend.text = element_text(size = 13),
+  legend.title= element_text(size = 15))
 
 # Dogs
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_d_1), color = "blue") + 
+  geom_line(mapping = aes(time, S_d_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, E_d_1), color = "blue") + 
+  geom_line(mapping = aes(time, E_d_2), color = "red") + myTheme
 
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_d_1), color = "blue") + 
   geom_line(mapping = aes(time, I_d_2), color = "red") + myTheme
 
 ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, V_d_1), color = "blue") + 
+  geom_line(mapping = aes(time, V_d_2), color = "red") + myTheme
+
+# Humans
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, S_h_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, E_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, E_h_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h_1), color = "blue") + 
   geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, V_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, V_h_2), color = "red") + myTheme
+
+# Nice plot of I_h
+
+out <- as.data.frame(SEIR_out[, c("time", "I_h_1", "I_h_2")])
+out <- reshape2::melt(out, id = "time")
+ggplot(data = out, aes(x = time, y = value, colour = variable)) +
+  geom_line() +  myTheme

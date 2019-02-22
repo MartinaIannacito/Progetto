@@ -93,10 +93,31 @@ ggplot(data = as.data.frame(SEIR_out)) +
 # Dogs, 4 in 1 plot
 
 ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, S_d), color = "blue") +
-  geom_line(mapping = aes(time, E_d), color = "orange") +
-  geom_line(mapping = aes(time, I_d), color = "red") + 
-  geom_line(mapping = aes(time, R_d), color = "green") + myTheme
+  geom_line(mapping = aes(time, log10(S_h)*200), color = "blue") +
+  geom_line(mapping = aes(time, E_h), color = "orange") +
+  geom_line(mapping = aes(time, I_h), color = "red") + 
+  geom_line(mapping = aes(time, log10(R_h)*200), color = "green") + myTheme
+
+################################################################################
+# PLOT WITH ALL HUMANS
+################################################################################
+
+data <- SEIR_out[, c("time", "S_h", "E_h", "I_h", "R_h")]
+data[, c("S_h", "R_h")] <- log10(data[, c("S_h", "R_h")])*200
+
+labels <- 10^(seq(0, 9, by = 2))
+breaks <- log10(labels)*200
+
+SEIR_out_long <- reshape2::melt(as.data.frame(data), id = "time")
+
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class") +
+  myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
+  scale_y_continuous(sec.axis = sec_axis(trans = ~., name =
+      latex2exp::TeX("$S_h$, $V_h$"),
+    breaks = breaks, labels = labels)) + theme(legend.position="bottom",
+      axis.title.y.right = element_text(margin = margin(l = 20))) + 
+  xlab("time (months)")
 
 ################################################################################
 # LONG TIME MODEL
@@ -107,6 +128,12 @@ SEIR_out_2 <- ode(init, times_2, SEIR, pars)
 
 ggplot(data = as.data.frame(SEIR_out_2)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out_2)) +
+  geom_line(mapping = aes(time, log10(S_h)*200), color = "blue") +
+  geom_line(mapping = aes(time, E_h), color = "orange") +
+  geom_line(mapping = aes(time, I_h), color = "red") + 
+  geom_line(mapping = aes(time, log10(R_h)*200), color = "green") + myTheme
 
 ################################################################################
 # DIFFERENT INITIAL CONDITIONS

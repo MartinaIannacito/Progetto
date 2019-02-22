@@ -22,13 +22,13 @@ SEIR <- function(t, state, pars) {
     V_h <- state[ind[12, ]]
     
     dS_d <- A_d + lambda_d * V_d + sigma_d * (1 - gamma_d) * E_d - beta_dd * S_d * I_d - (m_d + k_d) * S_d + phi_S %*% S_d - l * S_d - beta_ds * S_d * I_s
-    dE_d <- beta_dd * S_d * I_d - sigma_d * (1 - gamma_d) * E_d - sigma_d * gamma_d * E_d - (m_d + k_d) * E_d + phi_E %*% E_d - l_e * E_d + beta_ds * S_d * I_s
-    dI_d <- sigma_d * gamma_d * E_d - (m_d + mu_d) * I_d + phi_I %*% I_d
+    dE_d <- beta_dd * S_d * I_d - sigma_d * (1 - gamma_d) * E_d - sigma_d * gamma_d * E_d - (m_d + k_d) * E_d + phi_E %*% E_d - l * E_d + beta_ds * S_d * I_s
+    dI_d <- sigma_d * gamma_d * E_d - (m_d + mu_d) * I_d + phi_I %*% I_d - l_i * I_d
     dV_d <- k_d * (S_d + E_d) - (m_d + lambda_d) * V_d + phi_V %*% V_d - l * V_d
     
     dS_s <- A_s + lambda_s * V_s + sigma_s * (1 - gamma_s) * E_s - beta_ss * S_s * I_s - (m_s + k_s) * S_s + rho_S %*% S_s + l * S_d - beta_ds * S_s * I_d
-    dE_s <- beta_ss * S_s * I_s - sigma_s * (1 - gamma_s) * E_s - sigma_s * gamma_s * E_s - (m_s + k_s) * E_s + rho_E %*% E_s + l_e * E_d + beta_ds * S_s * I_d
-    dI_s <- sigma_s * gamma_s * E_s - (m_s + mu_s) * I_s + rho_I %*% I_s
+    dE_s <- beta_ss * S_s * I_s - sigma_s * (1 - gamma_s) * E_s - sigma_s * gamma_s * E_s - (m_s + k_s) * E_s + rho_E %*% E_s + l * E_d + beta_ds * S_s * I_d
+    dI_s <- sigma_s * gamma_s * E_s - (m_s + mu_s) * I_s + rho_I %*% I_s + l_i * I_d
     dV_s <- k_s * (S_s + E_s) - (m_s + lambda_s) * V_s + rho_V %*% V_s + l * V_d
     
     dS_h <- B + lambda_h * V_h + sigma_h * (1 - gamma_h) * E_h - beta_hd * S_h * I_d - m_h  * S_h + psi_S %*% S_h - beta_hs * S_h * I_d
@@ -41,11 +41,10 @@ SEIR <- function(t, state, pars) {
 }
 
 phi <- matrix(c(0, 0, 0, 0), nrow = 2)
-diag(phi) <- -rep(sum(phi), 2)
-psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
-diag(psi) <- -rep(sum(psi), 2)
 rho <- matrix(c(0, 0.05, 0.6, 0), nrow = 2)
-diag(rho) <- -rep(sum(rho), 2)
+diag(rho) <- -c(0.05, 0.6)
+psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
+diag(psi) <- -c(0.32, 0.2)
 
 pars <- list(
   A_d = c(3, 5) * 10 ^ 4,
@@ -87,7 +86,7 @@ pars <- list(
   rho_I = 3 * rho,
   rho_V = rho,
   l = rep(0.014, 2),
-  l_e = c(0.14, 0.028)
+  l_i = c(0.14, 0.028)
 )
 
 pars <- lapply(pars, "/", 12)
@@ -153,3 +152,4 @@ ggplot(data = as.data.frame(SEIR_out)) +
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h_1), color = "blue") + 
   geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
