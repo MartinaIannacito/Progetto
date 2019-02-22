@@ -1,5 +1,5 @@
 ---
-title: SIER models for rabies epidemics in China
+title: SIER models for rabies epidemic in China
 author: Martina Iannacito\textsuperscript{1} and Matteo Ciciani\textsuperscript{2}
 affiliation:
   - \textsuperscript{1}\textit{...}
@@ -8,7 +8,7 @@ output:
     pdf_document:
       latex_engine: xelatex
       template: SelfArx-template.tex
-abstract: Here is the abstract
+abstract: Here is the abstract \cite{Cina}
 ---
 # Introduction
 
@@ -70,9 +70,9 @@ endemic, is hampered by the high cost and lack of compliance \cite{Schnell}.
 
 ## SEIR models
 
-One of the most known model usedinvestigate the evolution of epidemics is SEIR.
-It is coherent to apply a basic SEIR model if the disease considered has an
-average duration shorter than the average time needed to observe significant
+One of the most known model used to investigate the evolution of epidemics is
+SEIR. It is coherent to apply a basic SEIR model if the disease considered has
+an average duration shorter than the average time needed to observe significant
 modifications in the population structure. For example it can be applied to
 describe flu epidemics in the human species, since the average lifespan of a
 human being and the time needed to generate a new individual are on average
@@ -219,11 +219,38 @@ $$
 Using the Routh-Hurwitz conditions, it can be proved as in \cite{mate1} that the
 endemic equilibrium, when it exists, is asymptotically stable.
 
+Numerical simulation for the a genericl SEIR model are shown in Fig.
+\ref{fig:gen1} and \ref{fig:gen2}, for values of $R_0>1$ and $R_0<1$,
+respectively.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen1}Numerical simulation of a SEIR model with $R_0>1$. We can see that the system convergest to the endemic equilibrium."}
+source("SEIR_general.R")
+
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class") +
+  myTheme + ylab("E, I, R") +
+  scale_y_continuous(sec.axis = sec_axis(trans = ~.*2, name = "S")) + 
+  theme(legend.position="bottom", axis.title.y.right =
+      element_text(margin = margin(l = 20))) + 
+  xlab("time")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen2}Numerical simulation of a SEIR model with $R_0<1$. We can see that the system convergest to the disease-free equilibrium."}
+source("SEIR_general.R")
+
+ggplot(data = SEIR_out_long2, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class") +
+  myTheme + ylab("E, I, R") +
+  scale_y_continuous(sec.axis = sec_axis(trans = ~.*10, name = "S")) + 
+  theme(legend.position="bottom", axis.title.y.right =
+      element_text(margin = margin(l = 20))) + 
+  xlab("time")
+```
+
 The basic structure of the SEIR system can be adequately modified and used to
 describe the rabies epidemic behavior as in \cite{PAPERNOSTRO?}.
 
 # Reproduction of original results
-
 
 ## SEIR model for dog-human interactions
 
@@ -254,9 +281,9 @@ loose immunity and get back to susceptible class. The ODE system is then:
 
 The flow chart of the model and the correspective parameters value are reported
 in \cite{paperCINA}. The system presents both the vitality and the epidemic
-dynamic. It is important to underline that the rate of loss of immunity for the dogs population has been added, compared to the
-original SEIR. The basic epidemic reproduction number can be
-computed \cite{23,96PapCinaBio} as:
+dynamic. It is important to underline that the rate of loss of immunity for the
+dogs population has been added, compared to the original SEIR. The basic
+epidemic reproduction number can be computed \cite{23,96PapCinaBio} as:
 
 $$
 R_0=\frac{\beta_d\sigma_d\gamma_d}{(m_d+\kappa_d+\sigma_d)(m_d+\mu_d)}\frac{(m_d
@@ -297,11 +324,13 @@ complete demonstration of the previous statement can be found in
 Finally, the paramteres of the model can be estimated using the data collected
 by the Chinese Ministry of Health. Using these parameters, it can be shown that
 the $R_0$ value for rabies in China is around 2. Therefore the epidemic moves
-toward the endemic equilibrium.
+towards the endemic equilibrium.
 
-Numerical simulation of the model can be performed
+A numerical simulation of the model from 1996, for a period of 50 years, is
+shown in Fig. \ref{fig:dh1}. The model indicates the tendency of the rabies
+epidemic to persist and move towards the endemic equilibrium.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:dh1}Numerical simulations of rabies cases in China from 1996, for a period of 50 years. $S(t)$ and $R(t)$ are plotted in log$_{10}$ scale. The curve for $I(t)$ reproduces Fig. 2.2b of \\cite{original}."}
 library(latex2exp)
 source("SEIR_dogs_humans.R")
 
@@ -319,14 +348,24 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
+We can examine how the initial conditions influence the dynamic of $I(t)$. The
+initial conditions of dogs can influence both the number of human rabies cases
+and the time of rabies case peak, as shown in Fig. \ref{fig:dh2} Eventually, the
+differences become small. We also observe that the peak of the initial outbreak
+would be postponed if $S_d(0)$ is decreasing.
+ 
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh2}Number of human rabies cases $I_h(t)$ for different initial values of the susceptible dog population $S_d(0)$. This plot reproduces Fig. 2.3a of \\cite{original}."}
 ggplot(data = I_h_df_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_d(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)") +
   xlim(0, 1000)
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh1}plotting example"}
+Instead, the initial conditions of humans influence only the number of human
+rabies cases and have no effect on th time of rabies cases peak, as we can see
+in Fig. \ref{fig:dh3}.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh3}Number of human rabies cases $I_h(t)$ for different initial values of the susceptible human population $S_h(0)$. This plot reproduces Fig. 2.3b of \\cite{original}."}
 ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_h(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)") +
@@ -335,11 +374,11 @@ ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
 
 ## SEIV model with domestic and stray dogs
 
-Although the previous model provided a good estimation of the Chinese rabies
-epidemic dynamic of the last years, it is not completely satisfactory. As a
-matter of fact, almost every region of China is populated by stray dogs.
-Consequently, it is useful to introduce another model, where the parameters of
-stray and domestic dogs are distinctly estimated.
+Although the previous model provided a good estimation of the epidemic dynamic
+of the last years, it is not completely satisfactory. As a matter of fact,
+almost every region of China is populated by stray dogs. Consequently, it is
+useful to introduce another model, where the parameters of stray and domestic
+dogs are distinctly estimated.
 
 The simplest formulation of this stray-domestic-human system is realized through
 a SEIV model with demographic dynamic at constant coefficients. In the SEIV
@@ -359,11 +398,11 @@ The model can be presented as:
 	\begin{cases}
 		S_0'(t) = lS_1 - (\mu + c)S_0 - \beta_0S_0I_0 + p_0E_0 + \delta_1V_0\\
 		E_0'(t) = lE_1 + \beta_0S_0I_0 - (\mu + c + \sigma_0 + p_0)E_0\\
-		I_0'(t) = \sigma_0E_0 + I_1 - (\mu + c + \alpha)I_0\\
+		I_0'(t) = \sigma_0E_0 + \epsilon I_1 - (\mu + c + \alpha)I_0\\
 		V_0'(t) = lV_1 - (\mu + c + \delta_1)V_0\\
 		S_1'(t) = A - \beta S_1I_0 - \beta_1S_1I_1 - (1 + \nu + l)S_1 + p_1E_1 + \delta2V_1\\
 		E_1'(t) = \beta S_1I_0 + \beta_1S_1I_1 - (1 + \nu + \sigma_1 + l + p_1)E_1\\
-		I_1'(t) = \sigma_1E_1 - (1 +  + k)I_1\\
+		I_1'(t) = \sigma_1E_1 - (1 + \epsilon + k)I_1\\
 		V_1'(t) = \nu(S_1 + E_1) - (1 + l + \delta_2)V_1\\
 		S_h'(t) = H - \mu_hS_h - \lambda_{1h}S_hI_0 - \lambda_{2h}S_hI_1 + \delta_{1h}Eh + \delta_{2h}V_h\\
 		E_h'(t) =\lambda_{1h}S_hI_0 + \lambda_{2h}S_hI_1 - (\mu_h + \sigma_h + \delta_{1h} + \nu_h)E_h\\
@@ -398,9 +437,12 @@ After having computed $R_0$, whose expression is presented in
 \cite{paperNostro}, it can be proved that if $R_0<1$, $E_0$ is globally
 asymptotically stable for system \ref{s4}.
 
-Estimation of parameters and numerical simulations
+Numerical simulations can be performed using paramteres estimated from data
+provided by the Department of Health of Guangdong Province. Fig. \ref{fig:dsh1}
+and Fig. \ref{fig:dsh2} show a simulation of human rabies infection cases over
+time for the Guangdong Province.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}Simulation of human rabies infection cases from 2006 to 2014 for the Guangdong Province of China. This plot reproduces Fig. 3.2 of \\cite{original}."}
 source("SEIR_dogs_stray_humans.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
@@ -408,7 +450,7 @@ ggplot(data = as.data.frame(SEIR_out)) +
   ylab(TeX("$I_h$")) + xlab("time (months)") + xlim(0, 100)
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh2}Numerical simulations of rabies cases in the Guangdong Province from 2006 to 2014. $S(t)$ and $V(t)$ are plotted in log$_{10}$ scale."}
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class") +
   myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
@@ -419,13 +461,24 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+We can examine how different values of the parameters influence the dynamic of
+$I(t)$. Fig. \ref{fig:dsh3} shows the dynamic of $I_h(t)$ for different values
+of $l$, the rate of domestic dog abandonment, and $\epsilon$, the rate of
+infectious domestic dog abandonment. We can observe that reducing $\epsilon$ is
+more effective than reducing $l$.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh3}Simulations of infected human rabies cases $I_h(t)$ in the Guangdong Province for different values of $l$ and $\\epsilon$. This plot reproduces Fig. 3.5a of \\cite{original}."}
 ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$l$, $\\epsilon$"), labels = labels_1) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)") + xlim(0, 125)
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+Fig. \ref{fig:dsh4} shows the dynamic of $I_h(t)$ for different values of $c$,
+the culling rate of stray dogs, and $\nu$, the vaccination rate of domestic
+dogs. We can observe that an increasing the vaccination rate is more effective
+in reducing $I_h(t)$ than increasing the culling rate.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh4}Simulations of infected human rabies cases $I_h(t)$ in the Guangdong Province for different values of $c$ and $\\nu$. This plot reproduces Fig. 3.5b of \\cite{original}."}
 ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "", labels = c(
     "No intervention", "50% stray dog culling", "100% stray dog culling",
@@ -434,7 +487,11 @@ ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)") + guides(col = guide_legend(nrow = 3)) + xlim(0, 125)
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+Finally, Fig. \ref{fig:dsh5} shows the dynamic of $I_h(t)$ for different values
+of $\nu_h$, the culling rate of stray dogs, the vaccination rate of exposed
+humans. Increasing $\nu_h$ decreases $I_h(t)$, but does not stop the epidemic.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh5}Simulations of infected human rabies cases $I_h(t)$ in the Guangdong Province for different values of $\\nu_h$. This plot should reproduces Fig. 3.5c of \\cite{original}, but is quite different."}
 ggplot(data = I_h_df_long_3, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$\\nu_h$"), labels = nu_h_vect) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
@@ -486,7 +543,7 @@ It is proved that the system \ref{s5} has
 	\item at least one positive periodic solution \cite{111paperNostroBio}.
 \end{itemize} 
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s1}plotting example"}
 source("SEIR_seasonal.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
@@ -494,7 +551,7 @@ ggplot(data = as.data.frame(SEIR_out)) +
   ylab(TeX("$I_h$")) + xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s2}plotting example"}
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class") +
   myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
@@ -505,20 +562,20 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s3}plotting example"}
 ggplot(data = as.data.frame(SEIR_out_2)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme + 
   ylab(TeX("$I_h$")) + xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s4}plotting example"}
 ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$S_d(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
   xlab("time (months)") + guides(col = guide_legend(nrow = 2))
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s5}plotting example"}
 ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$I_d(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
@@ -586,7 +643,7 @@ Even trying to compute the formal expression of $R_0$ is extremely complicated
 for two patches. Therefore the the study of this model behaviuor is based on the
 numerical simulations.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:p1}plotting example"}
 source("SEIV_patch.R")
 
 ggplot(data = out, aes(x = time, y = value, colour = variable)) +
@@ -604,7 +661,7 @@ MC : eq, plots, flow
 ## Multi-patch SEIV model with stray dogs
 
 ```{r, include=FALSE}
-wdgt <- DiagrammeR::grViz("~/Link to MQCB/II/I Semester/Mathematical Modeling/Project/Project/Progetto/R/patch_SEIV.gv")
+wdgt <- DiagrammeR::grViz("patch_SEIV.gv")
 wdgt_html_tf <- tempfile(fileext=".html")
 htmlwidgets::saveWidget(wdgt, wdgt_html_tf)
 webshot::webshot(url=sprintf("file://%s", wdgt_html_tf), 
@@ -614,12 +671,12 @@ unlink(wdgt_html_tf)
 ```
 \begin{figure*}[!htb]
   \centering
-  \includegraphics[width=\textwidth,trim = 4cm 7.1cm 2.5cm 1.2cm, clip]{/media/matteo/OS/Users/matte/Desktop/MQCB/II/I Semester/Mathematical Modeling/Project/Project/Progetto/R/patch_SEIV.pdf}
+  \includegraphics[width=\textwidth,trim = 4cm 7.1cm 2.5cm 1.2cm, clip]{patch_SEIV.pdf}
   \caption{test}
   \label{fig:mess}
 \end{figure*}
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}plotting example"}
 source("SEIV_patch_stray.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
@@ -629,7 +686,7 @@ ggplot(data = as.data.frame(SEIR_out)) +
 
 ## Multi-patch seasonal SEIV model
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}plotting example"}
 source("SEIV_patch_stray_seasonal.R")
 
 ggplot(data = as.data.frame(SEIR_out)) +
@@ -639,7 +696,7 @@ ggplot(data = as.data.frame(SEIR_out)) +
 
 # Conclusions
 
-
+Different models have been proposed and summarized to describe the dynamic of the rabies epidemic in China. However some small inconsistencies in \cite{Cina} has made studying this paper challenging. Moreover data deficit has made impossible to estimate the accuracy of the new proposed patches model.
 
 \begin{thebibliography}{1}
 	
@@ -659,4 +716,47 @@ ggplot(data = as.data.frame(SEIR_out)) +
 	Shuangshoti S, Laothamatas J. Human rabies: neuropathogenesis, diagnosis, and
 	management. Lancet Neurol. 2013; 12(5):498-513.
 	
+	\bibitem{Cina} 
+	Ruan S.Modeling the transmission dynamics and control of rabies in China.
+	Mathematical biosciences 286. 2017; 65-93.
+	
+	\bibitem{54} 
+	J. Ma , Z. Ma. Epidemic threshold conditions for seasonally forced SEIR models.
+	Math. Biosci. Eng. 3. 2006; 161 -172.
+	 
+	\bibitem{78} 
+	I. Schwartz. Small amplitude, long periodic out breaks in seasonally driven
+	epidemics. J. Math. Biol. 30. 1992; 473 -491 .
+	
+	\bibitem{113} 
+	J. Zhang, Z. Jin, G. Sun, T. Zhou, S. Ruan. Analysis of rabies in China:
+	transmission dynamics and control. PLoS One 6. 2011; e20891.
+	
+	\bibitem{111} 
+	J. Zhang, Z. Jin, G. Sun, T. Zhou, S. Ruan. Analysis of rabies in China:
+	transmission dynamics and control. PLoS One 6. 2011; e20891.
+	
+	\bibitem{108} 
+	J. Yu, L. Hao, Q. Tang. The spatial and temporal dynamics of rabies in China.
+	PLoS Negl. Trop. Dis. 6. 2012; e1640.
+	
+	\bibitem{106} 
+	C. Yin, H. Zhou, H. Wu. Analysis on factors related to rabies epidemic in China
+	from 2007 -2011. Virol. Sin. 27. 2012; 132 -143.
+	
+	\bibitem{23} 
+	Diekmann, J.A.P. Heesterbeek, M.G. Roberts. The construction of next-generation
+	matrices for compartmental epidemic models. J. R. Soc. Interface 7. 2010; 873
+	-885.
+	
+	\bibitem{96} 
+	X. Wang, J. Lou. Two dynamic models about rabies between dogs and human. Biol.
+	Syst. 16. 2008; 519 -529.
+	
+	\bibitem{mate1} 
+	Stefan Ma, Yingcun Xia. Mathematical Understanding of Infectious Disease
+	Dynamics. Lecture Notes Series, Institute for Mathematical Sciences, National
+	University of Singapore: Volume 16. 2008; 33-35.
+
 \end{thebibliography}
+
