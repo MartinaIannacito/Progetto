@@ -1,8 +1,10 @@
 ---
-title: "Untitled"
-author: "Matteo Ciciani"
+title: "SEIR models for rabies epidemic in China"
+author: "Martina Iannacito and Matteo Ciciani"
 date: "February 25, 2019"
-output: beamer_presentation
+output:
+  beamer_presentation:
+    theme: "Copenhagen"
 ---
 
 ```{r setup, include=FALSE}
@@ -10,43 +12,37 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## SEIR: an introduction
-Column 1
---------------------------------------------------
+
+### Basic model
 \begin{align*}
   \begin{cases}
-  S'(t) = \betaN-\frac{c\chi}{N}S(t)I(t)-\muS(t)\\
+  S'(t) = \beta N-\frac{c\chi}{N}S(t)I(t)-\mu S(t)\\
   E'(t) = \frac{c\chi}{N}S(t)I(t)-(k+\mu)E(t)\\
   I'(t) = kE(t)-(\mu+\gamma) I(t)\\
-  R'(t) =\gamma I(t)-\muR(t)
+  R'(t) =\gamma I(t)-\mu R(t)
   \end{cases}
 \end{align*}
 
-Column 2
---------------------------------------------------
-\begin{align}
-		\label{s3}
-		\begin{cases}
-			\dot{u}(\tau) = -R_0u(\tau)u(\tau)w(\tau)+\beta(1-u(\tau))\\
-			\dot{v}(\tau) = R_0u(\tau)w(\tau)-(\rho+\beta)v(\tau)\\
-			\dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
-			\dot{z}(\tau) = w(\tau)-\beta z.
-		\end{cases}
-	\end{align}
+### Rescaled model
+\begin{align*}
+	\begin{cases}
+		\dot{u}(\tau) = -R_0u(\tau)u(\tau)w(\tau)+\beta(1-u(\tau))\\
+		\dot{v}(\tau) = R_0u(\tau)w(\tau)-(\rho+\beta)v(\tau)\\
+		\dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
+		\dot{z}(\tau) = w(\tau)-\beta z\\
+	\end{cases}
+\end{align*}
 
+## Equilibria and stability
 
-## Simulations
-
+### Basic epidemiological reproduction number
 $$
 R_0 = \frac{c\chi}{\gamma}
 $$
 
+## $R_0>1+\frac{\beta}{\rho}$
 
-Column 1
---------------------------------------------------
-
-### $$R_0>1+\frac{\beta}{\rho}$$
-
-```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen1}Numerical simulation of a SEIR model with $R_0>1$. We can see that the system convergest to the endemic equilibrium."}
+```{r, echo=FALSE, fig.fullwidth=TRUE}
 source("SEIR_general.R")
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class") +
@@ -57,11 +53,8 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time")
 ```
 
-Column 2
---------------------------------------------------
-
-### $$R_0>1+\frac{\beta}{\rho}$$
-```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen2}Numerical simulation of a SEIR model with $R_0<1$. We can see that the system convergest to the disease-free equilibrium."}
+## $R_0>1+\frac{\beta}{\rho}$
+```{r, echo=FALSE}
 source("SEIR_general.R")
 ggplot(data = SEIR_out_long2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class") +
@@ -81,13 +74,13 @@ I_d'(t) = \sigma_d\gamma_d E_d - (m_d + \mu_d)I_d\\
 R_d'(t) = k(S_d + E_d) - (m_d + \lambda_d)R_d\\
 S_h'(t) = B + \lambda_hR_h + \sigma_h(1 - \gamma_h )E_h - m_hS_h - \beta_{dh}S_hI_h\\
 E_h'(t) = \beta_{dh}S_hI_d - \sigma_h(1 - \gamma_h )E_h - \sigma_h\gamma_hE_h - (m_h + k_h )E_h\\
-I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\\
-R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h
+I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\
+R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h\\
 \end{cases}
 \end{align*}
 
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:dh1}Numerical simulations of rabies cases in China from 1996, for a period of 50 years. $S(t)$ and $R(t)$ are plotted in log$_{10}$ scale. The curve for $I(t)$ reproduces Fig. 2.2b of \\cite{Cina}."}
+## Numerical simulations
+```{r, echo=FALSE}
 library(latex2exp)
 source("SEIR_dogs_humans.R")
 # ggplot(data = as.data.frame(SEIR_out)) +
@@ -103,15 +96,16 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh2}Number of human rabies cases $I_h(t)$ for different initial values of the susceptible dog population $S_d(0)$. This plot reproduces Fig. 2.3a of \\cite{Cina}."}
+## Different initial conditions: $S_d(0)$
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_d(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)") +
   xlim(0, 1000)
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh3}Number of human rabies cases $I_h(t)$ for different initial values of the susceptible human population $S_h(0)$. This plot reproduces Fig. 2.3b of \\cite{Cina}."}
+
+## Different initial conditions: $S_h(0)$
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = latex2exp::TeX("$S_h(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)") +
@@ -120,9 +114,7 @@ ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
 
 ## SEIV: a distinction between domestic and stray
 \begingroup
-\setlength{\mathindent}{0pt}
-\begin{align}
-	\label{s4}
+\begin{align*}
 	\begin{cases}
 		S_0'(t) = lS_1 - (\mu + c)S_0 - \beta_0S_0I_0 + p_0E_0 + \delta_1V_0\\
 		E_0'(t) = lE_1 + \beta_0S_0I_0 - (\mu + c + \sigma_0 + p_0)E_0\\
@@ -137,18 +129,19 @@ ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
 		I_h'(t) = \sigma_hE_h - (\mu_h + \alpha_h )I_h\\
 		V_h'(t) = \nu_hE_h - (\mu_h + \delta_{2h})V_h\\
 	\end{cases}
-\end{align}
+\end{align*}
 \endgroup
 
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}Simulation of human rabies infection cases from 2006 to 2014 for the Guangdong Province of China. This plot reproduces Fig. 3.2 of \\cite{Cina}."}
+## Numerical simulations
+```{r, echo=FALSE}
 source("SEIR_dogs_stray_humans.R")
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme +
   ylab(TeX("$I_h$")) + xlab("time (months)") + xlim(0, 100)
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh2}Numerical simulations of rabies cases in the Guangdong Province from 2006 to 2014. $S(t)$ and $V(t)$ are plotted in log$_{10}$ scale."}
+
+## Numerical simulations
+```{r, echo=FALSE}
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class") +
   myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
@@ -159,36 +152,36 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-##
-
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh3}Simulations of infected human rabies cases $I_h(t)$ in the Guangdong Province for different values of $l$ and $\\epsilon$. This plot reproduces Fig. 3.5a of \\cite{Cina}."}
+## Different parameter values: $l$ and $\epsilon$
+$l$ and $\epsilon$: abandonment rate of non-infectious and infectious dogs
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$l$, $\\epsilon$"), labels = labels_1) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + xlab("time (months)") + xlim(0, 125)
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh4}Simulations of infected human rabies cases $I_h(t)$ in the Guangdong Province for different values of $c$ and $\\nu$. This plot reproduces Fig. 3.5b of \\cite{Cina}."}
+
+## Different parameter values: culling and vaccination rates
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "", labels = c(
     "No intervention", "50% stray dog culling", "100% stray dog culling",
     "50% vaccination", "70% vaccination")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
-  xlab("time (months)") + guides(col = guide_legend(nrow = 3)) + xlim(0, 125)
+  xlab("time (months)") + guides(col = guide_legend(nrow = 2)) + xlim(0, 125)
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh5}Simulations of infected human rabies cases $I_h(t)$ in the Guangdong Province for different values of $\\nu_h$. This plot should reproduces Fig. 3.5c of \\cite{Cina}, but is quite different."}
+
+## Different parameter values: $\nu_h$
+$\nu_h$: vaccination rate of humans
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long_3, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$\\nu_h$"), labels = nu_h_vect) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
   xlab("time (months)") + xlim(0, 125)
 ```
 
-
 ## SEIR: a seasonal model
 \begingroup
-\setlength{\mathindent}{0pt}
-\begin{align}
-\label{s5}
+\begin{align*}
 \begin{cases}
 S_d'(t) = A + \lambda_dR_d + \sigma_d (1 - \gamma_d )E_d - \beta_d(t) S_dI_d - (m_d + k_d)S_d\\
 E_d'(t) = \beta_d(t) S_dI_d - \sigma_d (1 - \gamma_d )E_d - \sigma_d\gamma_d E_d - (m_d + k_d)E_d\\
@@ -197,19 +190,25 @@ R_d'(t) = k(S_d + E_d) - (m_d + \lambda_d)R_d\\
 S_h'(t) = B + \lambda_hR_h + \sigma_h(1 - \gamma_h )E_h - m_hS_h - \beta_{dh}(t)S_hI_h\\
 E_h'(t) = \beta_{dh}(t)S_hI_d - \sigma_h(1 - \gamma_h )E_h - \sigma_h\gamma_hE_h - (m_h + k_h )E_h\\
 I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\\
-R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h
-\end{align}
+R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h\\
+\end{cases}
+\end{align*}
 \endgroup
 
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s1}Simulation of human rabies infection cases in China from 2004, for a period of 12.5 years. This plot reproduces Fig. 4.2a of \\cite{Cina}."}
+Periodic transmission rates:
+$$\beta_{d}(t)=a[1 + bsin( \frac{\pi}{6} t + 5.5)]$$
+$$\beta_{hd}(t)a_1[1 + b_1sin( \frac{\pi}{6} t + 5.5)]$$
+
+## Numerical simulations
+```{r, echo=FALSE}
 source("SEIR_seasonal.R")
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme + 
   ylab(TeX("$I_h$")) + xlab("time (months)")
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s2}Numerical simulations of human rabies cases in China from 2004, for a period of 12.5 years. $S(t)$ and $R(t)$ are plotted in log$_{10}$ scale."}
+
+## Numerical simulations
+```{r, echo=FALSE}
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class") +
   myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
@@ -219,21 +218,24 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
       axis.title.y.right = element_text(margin = margin(l = 20))) + 
   xlab("time (months)")
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s3}Simulation of human rabies infection cases in China from 2004, for a period of 125 years. This plot reproduces Fig. 4.2b of \\cite{Cina}."}
+
+## Numerical simulations
+```{r, echo=FALSE}
 ggplot(data = as.data.frame(SEIR_out_2)) +
   geom_line(mapping = aes(time, I_h), color = "red") + myTheme + 
   ylab(TeX("$I_h$")) + xlab("time (months)")
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s4}Number of human rabies cases $I_h(t)$ for different initial values of the susceptible dog population $S_d(0)$. This plot reproduces Fig. 4.3a of \\cite{Cina}."}
+
+## Different initial conditions: $S_d(0)$
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long_1, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$S_d(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
-  xlab("time (months)") + guides(col = guide_legend(nrow = 2))
+  xlab("time (months)")
 ```
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s5}Number of human rabies cases $I_h(t)$ for different initial values of the infectious dog population $I_d(0)$. This plot reproduces Fig. 4.3b of \\cite{Cina}."}
+
+## Different initial conditions: $I_d(0)$
+```{r, echo=FALSE}
 ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = TeX("$I_d(0)$")) +
   myTheme + ylab(TeX("$I_h$")) + theme(legend.position="bottom") + 
@@ -243,9 +245,7 @@ ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
 ## SEIV: multi-patches model
 \begingroup
 \small
-\setlength{\mathindent}{0pt}
-\begin{align}
-	\label{s6}
+\begin{align*}
 	\begin{cases}
 	S_{d,i}'(t) = & A_i + \lambda_{d,i}V_{d,i} + \sigma_{d,i} (1 - \gamma_{d,i})E_{d,i} - \beta_{d,i}S_{d,i}I_{d,i} +\\
 	& - (m_{d,i} + k_{d,i})S_{d,i}+\sum_{j=1}^n\Phi^S_{ij}S_{d,j}\\
@@ -267,11 +267,11 @@ ggplot(data = I_h_df_long_2, aes(x = time, y = value, colour = variable)) +
 	V_{h,i}'(t) =& k_{h,i}E_{h,i} - (m_{h,i} + \lambda_{h,i}
 	)V_{h,i}+\sum_{j=1}^n\Psi^V_{ij}V_{h,j}\\
 	\end{cases}
-\end{align}
+\end{align*}
 \endgroup
 
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:p1}Simulations of the numbers of reported human rabies cases in Hebei and Fujian from 2004 to 2012. This plot attempts to reproduces Fig. 6.3 of \\cite{Cina}, using plausible values of the initial conditions."}
+## Numerical simulation for Hebei and Fujian
+```{r, echo=FALSE}
 source("SEIV_patch.R")
 ggplot(data = out, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "Province", labels =
@@ -283,10 +283,8 @@ ggplot(data = out, aes(x = time, y = value, colour = variable)) +
 
 ## SEIV: multi-patches with domestic and stray dogs
 \begingroup
-\small
-\setlength{\mathindent}{0pt}
-\begin{align}
-	\label{s6}
+\begin{align*}
+\tiny
 	\begin{cases}
   S_{s,i}'(t) = & A_{s,i} + \lambda_{s,i}V_{s,i} + \sigma_{s,i} (1 - \gamma_{s,i})E_{s,i} - \beta_{ss,i}S_{s,i}I_{s,i} +\\
 	& - \beta_{ds,i}S_{s,i}I_{d,i} - (m_{s,i} + k_{s,i})S_{s,i}+\sum_{j=1}^nP^S_{ij}S_{s,j} + lS_{d,i}\\
@@ -315,10 +313,10 @@ ggplot(data = out, aes(x = time, y = value, colour = variable)) +
 	V_{h,i}'(t) =& k_{h,i}E_{h,i} - (m_{h,i} + \lambda_{h,i}
 	)V_{h,i}+\sum_{j=1}^n\Psi^V_{ij}V_{h,j}\\
 	\end{cases}
-\end{align}
+\end{align*}
 \endgroup
 
-##
+## Flow chart of the model
 ```{r, include=FALSE}
 wdgt <- DiagrammeR::grViz("patch_SEIV.gv")
 wdgt_html_tf <- tempfile(fileext = ".html")
@@ -328,21 +326,13 @@ webshot::webshot(url = sprintf("file://%s", wdgt_html_tf),
   file = "patch_SEIV.pdf")
 unlink(wdgt_html_tf)
 ```
-\begin{figure*}[!htb]
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=\textwidth,trim = 4cm 7.1cm 2.5cm 1.2cm, clip]{patch_SEIV.pdf}
-  \caption{Flow chart of the SEIV model with stray and domestic dogs. The
-  meaning of parameters is identical to the multi-patch model presentes in
-  \cite{Cina}. Additional parameters not present in that model are: the
-  transmission rated between the different classes $\beta_{dd}$, $\beta_{ds}$,
-  $\beta_{ss}$, $\beta_{hd}$, $\beta_{hs}$; the abandonment rates of infectious
-  and non-infectious domestic dogs $\epsilon$ and $l$, respectively; the travel
-  rate matrices of stray dogs $P^J$, $J=S,E,I,V$.}
-  \label{fig:mess}
-\end{figure*}
+\end{figure}
 
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}Numerical simulation of the number of exposed and infectious humand in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs."}
+## Numerical simulation
+```{r, echo=FALSE}
 source("SEIV_patch_stray.R")
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class", labels =
@@ -353,16 +343,14 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
+## SEIR: multi-patches with domestic and stray dogs and seasonal components
+### New transmission rates are:
+$$\beta_{dd}(t)=a_{dd}[1 + b_{dd}sin( \frac{\pi}{6} t + 5.5)]$$
+$$\beta_{ss}(t)=\beta_{ds}(t)=a_s[1 + b_ssin( \frac{\pi}{6} t + 5.5)]$$
+$$\beta_{hd}(t)=\beta_{hs}(t)=a_h[1 + b_hsin( \frac{\pi}{6} t + 5.5)]$$
 
-
-##SEIR: multi-patches with domestic and stray dogs and seasonal components
-The new transmission rate are:
--$$\beta_{dd}(t)=a_{dd}[1 + b_{dd}sin( \frac{\pi}{6} t + 5.5)]$$
--$$\beta_{ss}(t)=\beta_{ds}(t)=a_s[1 + b_ssin( \frac{\pi}{6} t + 5.5)]$$
--$$\beta_{hd}(t)=\beta_{hs}(t)=a_h[1 + b_hsin( \frac{\pi}{6} t + 5.5)]$$
-
-##
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}Numerical simulation of the number of exposed and infectious humand in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs and seasonal transmission rates."}
+## Numerical simulation
+```{r, echo=FALSE}
 source("SEIV_patch_stray_seasonal.R")
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "class", labels =
@@ -373,10 +361,9 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-### Culling rate of stray dogs
+## Different parameter values: culling rate of stray dogs
 
-
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}Numerical simulation of the number of human rabies cases in the Hebei province for different values of the culling rate of stray dogs."}
+```{r, echo=FALSE}
 ggplot(data = I_h_1_df_cull_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "Culling rate",
     labels = c("0", "0.2", "0.4", "0.655")) +
@@ -384,9 +371,9 @@ ggplot(data = I_h_1_df_cull_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-### Birth rate of stray dogs
+## Different parameter values: birth rate of stray dogs
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:birth}Numerical simulation of the number of human rabies cases in the Hebei province for different values of the birth rate of stray dogs."}
+```{r, echo=FALSE}
 ggplot(data = I_h_1_df_birth_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "birth rate multiplier",
     labels = c("1", "0.5", "0.2", "0.1")) +
@@ -394,22 +381,21 @@ ggplot(data = I_h_1_df_birth_long, aes(x = time, y = value, colour = variable)) 
   xlab("time (months)")
 ```
 
-### Vaccination rate of dogs
+## Different parameter values: vaccination rate of dogs
 
-
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:vax}Numerical simulation of the number of human rabies cases in the Hebei province for different values of the vaccination rate of stray and domestic dogs."}
+```{r, echo=FALSE}
 ggplot(data = I_h_1_df_vax_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "vaccination rate") +
   myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
   xlab("time (months)")
 ```
 
-### Effect of a dual immunocontraceptive vaccine
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+## Effect of a dual immunocontraceptive vaccine
+```{r, echo=FALSE}
 ggplot(data = I_h_1_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
-  geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
+  geom_line() + scale_color_discrete(name = "birth rate multiplier, vaccination rate",
     labels = c("1, 0.1", "2/3, 0.2", "2/3, 0.3", "1/2, 0.4")) +
   myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
-  xlab("time (months)") + guides(col = guide_legend(nrow = 2))
+  xlab("time (months)")
 ```
 

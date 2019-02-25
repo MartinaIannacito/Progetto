@@ -763,7 +763,7 @@ ODEs for the model is:
 
 where the subscripts $s$, $d$ and $h$ respectively denote stray dogs, domestic
 dogs and humans and the subscript $i$ denotes the $i^{th}$ patch,
-$forall i\in\{1,\dots,n\}$.
+$\forall i\in\{1,\dots,n\}$.
 
 ```{r, include=FALSE}
 wdgt <- DiagrammeR::grViz("patch_SEIV.gv")
