@@ -9,27 +9,193 @@ output: beamer_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## R Markdown
+## SEIR: an introduction
+Column 1
+--------------------------------------------------
+\begin{align*}
+  \begin{cases}
+  S'(t) = \betaN-\frac{c\chi}{N}S(t)I(t)-\muS(t)\\
+  E'(t) = \frac{c\chi}{N}S(t)I(t)-(k+\mu)E(t)\\
+  I'(t) = kE(t)-(\mu+\gamma) I(t)\\
+  R'(t) =\gamma I(t)-\muR(t)
+  \end{cases}
+\end{align*}
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Column 2
+--------------------------------------------------
+\begin{align}
+		\label{s3}
+		\begin{cases}
+			\dot{u}(\tau) = -R_0u(\tau)u(\tau)w(\tau)+\beta(1-u(\tau))\\
+			\dot{v}(\tau) = R_0u(\tau)w(\tau)-(\rho+\beta)v(\tau)\\
+			\dot{w}(\tau) = \rho v(\tau)-w(\tau)\\
+			\dot{z}(\tau) = w(\tau)-\beta z.
+		\end{cases}
+	\end{align}
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
 
-## Slide with Bullets
+## Simulations
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
-- Bullet 4
-## Slide with R Output
+$$
+R_0 = \frac{c\chi}{\gamma}
+$$
 
-```{r cars, echo = TRUE}
-summary(cars)
+
+Column 1
+--------------------------------------------------
+
+### $$R_0>1+\frac{\beta}{\rho}$$
+
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen1}Numerical simulation of a SEIR model with $R_0>1$. We can see that the system convergest to the endemic equilibrium."}
+source("SEIR_general.R")
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class") +
+  myTheme + ylab("E, I, R") +
+  scale_y_continuous(sec.axis = sec_axis(trans = ~.*2, name = "S")) + 
+  theme(legend.position="bottom", axis.title.y.right =
+      element_text(margin = margin(l = 20))) + 
+  xlab("time")
 ```
 
-## Slide with Plot
+Column 2
+--------------------------------------------------
 
-```{r pressure}
-plot(pressure)
+### $$R_0>1+\frac{\beta}{\rho}$$
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen2}Numerical simulation of a SEIR model with $R_0<1$. We can see that the system convergest to the disease-free equilibrium."}
+source("SEIR_general.R")
+ggplot(data = SEIR_out_long2, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class") +
+  myTheme + ylab("E, I, R") +
+  scale_y_continuous(sec.axis = sec_axis(trans = ~.*10, name = "S")) + 
+  theme(legend.position="bottom", axis.title.y.right =
+      element_text(margin = margin(l = 20))) + 
+  xlab("time")
 ```
 
+## SEIR for rabies epidemic
+\begin{align*}
+\begin{cases}
+S_d'(t) = A + \lambda_dR_d + \sigma_d (1 - \gamma_d )E_d - \beta_d S_dI_d - (m_d + k_d)S_d\\
+E_d'(t) = \beta_d S_dI_d - \sigma_d (1 - \gamma_d )E_d - \sigma_d\gamma_d E_d - (m_d + k_d)E_d\\
+I_d'(t) = \sigma_d\gamma_d E_d - (m_d + \mu_d)I_d\\
+R_d'(t) = k(S_d + E_d) - (m_d + \lambda_d)R_d\\
+S_h'(t) = B + \lambda_hR_h + \sigma_h(1 - \gamma_h )E_h - m_hS_h - \beta_{dh}S_hI_h\\
+E_h'(t) = \beta_{dh}S_hI_d - \sigma_h(1 - \gamma_h )E_h - \sigma_h\gamma_hE_h - (m_h + k_h )E_h\\
+I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\\
+R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h
+\end{cases}
+\end{align*}
+
+## SEIR: a distinction between domestic and stray
+\begingroup
+\setlength{\mathindent}{0pt}
+\begin{align}
+	\label{s4}
+	\begin{cases}
+		S_0'(t) = lS_1 - (\mu + c)S_0 - \beta_0S_0I_0 + p_0E_0 + \delta_1V_0\\
+		E_0'(t) = lE_1 + \beta_0S_0I_0 - (\mu + c + \sigma_0 + p_0)E_0\\
+		I_0'(t) = \sigma_0E_0 + \epsilon I_1 - (\mu + c + \alpha)I_0\\
+		V_0'(t) = lV_1 - (\mu + c + \delta_1)V_0\\
+		S_1'(t) = A - \beta S_1I_0 - \beta_1S_1I_1 - (1 + \nu + l)S_1 + p_1E_1 + \delta2V_1\\
+		E_1'(t) = \beta S_1I_0 + \beta_1S_1I_1 - (1 + \nu + \sigma_1 + l + p_1)E_1\\
+		I_1'(t) = \sigma_1E_1 - (1 + \epsilon + k)I_1\\
+		V_1'(t) = \nu(S_1 + E_1) - (1 + l + \delta_2)V_1\\
+		S_h'(t) = H - \mu_hS_h - \lambda_{1h}S_hI_0 - \lambda_{2h}S_hI_1 + \delta_{1h}Eh + \delta_{2h}V_h\\
+		E_h'(t) =\lambda_{1h}S_hI_0 + \lambda_{2h}S_hI_1 - (\mu_h + \sigma_h + \delta_{1h} + \nu_h)E_h\\
+		I_h'(t) = \sigma_hE_h - (\mu_h + \alpha_h )I_h\\
+		V_h'(t) = \nu_hE_h - (\mu_h + \delta_{2h})V_h\\
+	\end{cases}
+\end{align}
+\endgroup
+
+
+## SEIR: a seasonal model
+\begingroup
+\setlength{\mathindent}{0pt}
+\begin{align}
+\label{s5}
+\begin{cases}
+S_d'(t) = A + \lambda_dR_d + \sigma_d (1 - \gamma_d )E_d - \beta_d(t) S_dI_d - (m_d + k_d)S_d\\
+E_d'(t) = \beta_d(t) S_dI_d - \sigma_d (1 - \gamma_d )E_d - \sigma_d\gamma_d E_d - (m_d + k_d)E_d\\
+I_d'(t) = \sigma_d\gamma_d E_d - (m_d + \mu_d)I_d\\
+R_d'(t) = k(S_d + E_d) - (m_d + \lambda_d)R_d\\
+S_h'(t) = B + \lambda_hR_h + \sigma_h(1 - \gamma_h )E_h - m_hS_h - \beta_{dh}(t)S_hI_h\\
+E_h'(t) = \beta_{dh}(t)S_hI_d - \sigma_h(1 - \gamma_h )E_h - \sigma_h\gamma_hE_h - (m_h + k_h )E_h\\
+I_h'(t) = \sigma_h\gamma_hE_h - (m_h + \mu_h)I_h\\\
+R_h'(t) = k_hE_h - (m_h + \lambda_h )R_h
+\end{align}
+\endgroup
+
+## SEIR: multi-patches model
+\begingroup
+\small
+\setlength{\mathindent}{0pt}
+\begin{align}
+	\label{s6}
+	\begin{cases}
+	S_{d,i}'(t) = & A_i + \lambda_{d,i}V_{d,i} + \sigma_{d,i} (1 - \gamma_{d,i})E_{d,i} - \beta_{d,i}S_{d,i}I_{d,i} +\\
+	& - (m_{d,i} + k_{d,i})S_{d,i}+\sum_{j=1}^n\Phi^S_{ij}S_{d,j}\\
+	E_{d,i}'(t) = & \beta_{d,i}  S_{d,i}I_{d,i} - \sigma_{d,i} (1 - \gamma_{d,i}
+	)E_{d,i} - \sigma_{d,i}\gamma_{d,i} E_{d,i} +\\
+	& - (m_{d,i} + k_{d,i})E_{d,i}+\sum_{j=1}^n\Phi^E_{ij}E_{d,j}\\
+	I_{d,i}'(t) = & \sigma_{d,i}\gamma_{d,i} E_{d,i} - (m_{d,i} +
+	\mu_{d,i})I_{d,i}+\sum_{j=1}^n\Phi^I_{ij}I_{d,j}\\
+	V_{d,i}'(t) =& k_{d,i}(S_{d,i} + E_{d,i}) - (m_{d,i} + \lambda_{d,i})V_{d,i}
+	+\sum_{j=1}^n\Phi^V_{ij}V_{d,j}\\
+	S_{h,i}'(t) =& B + \lambda_{h,i}V_{h,i} + \sigma_{h,i}(1 - \gamma_{h,i} )E_{h,i}
+	- m_{h,i}S_{h,i} +\\
+	& - \beta_{dh,i}S_{h,i}I_{d,i}+\sum_{j=1}^n\Psi^S_{ij}S_{h,j}\\
+	E_{h,i}'(t) =& \beta_{dh,i} S_{h,i}I_{d,i} - \sigma_{h,i}(1 - \gamma_{h,i}
+	)E_{h,i} - \sigma_{h,i}\gamma_{h,i}E_{h,i} +\\
+	& - (m_{h,i} + k_{h,i} )E_{h,i}	+\sum_{j=1}^n\Psi^E_{ij}E_{h,j}\\
+	I_{h,i}'(t) =& \sigma_{h,i}\gamma_{h,i}E_{h,i} - (m_{h,i} + \mu_{h,i})I_{h,i} +
+	\sum_{j=1}^n\Psi^I_{ij}I_{h,j}\\
+	V_{h,i}'(t) =& k_{h,i}E_{h,i} - (m_{h,i} + \lambda_{h,i}
+	)V_{h,i}+\sum_{j=1}^n\Psi^V_{ij}V_{h,j}\\
+	\end{cases}
+\end{align}
+\endgroup
+
+
+## SEIR: multi-patches with domestic and stray dogs
+\begingroup
+\small
+\setlength{\mathindent}{0pt}
+\begin{align}
+	\label{s6}
+	\begin{cases}
+  S_{s,i}'(t) = & A_{s,i} + \lambda_{s,i}V_{s,i} + \sigma_{s,i} (1 - \gamma_{s,i})E_{s,i} - \beta_{ss,i}S_{s,i}I_{s,i} +\\
+	& - \beta_{ds,i}S_{s,i}I_{d,i} - (m_{s,i} + k_{s,i})S_{s,i}+\sum_{j=1}^nP^S_{ij}S_{s,j} + lS_{d,i}\\
+	E_{s,i}'(t) = & \beta_{ds,i}  S_{s,i}I_{d,i} + \beta_{ss,i}  S_{s,i}I_{s,i} + lE_{d,i} - \sigma_{s,i} (1 - \gamma_{s,i}
+	)E_{s,i} \\
+	& - \sigma_{s,i}\gamma_{s,i} E_{s,i} - (m_{s,i} + k_{s,i})E_{s,i}+\sum_{j=1}^nP^E_{ij}E_{s,j} \\
+	I_{s,i}'(t) = & \sigma_{s,i}\gamma_{s,i} E_{s,i} - (m_{s,i} +
+	\mu_{s,i})I_{s,i}+\sum_{j=1}^nP^I_{ij}I_{s,j} + \epsilon I_{d,i}\\
+	V_{s,i}'(t) =& k_{s,i}(S_{s,i} + E_{s,i}) - (m_{s,i} + \lambda_{s,i})V_{s,i} +\sum_{j=1}^nP^V_{ij}V_{s,j} + lI_{d,i}\\
+	S_{d,i}'(t) = & A_{d,i} + \lambda_{d,i}V_{d,i} + \sigma_{d,i} (1 - \gamma_{d,i})E_{d,i} - \beta_{dd,i}S_{d,i}I_{d,i} +\\
+	& -\beta_{ds,i}S_{d,i}I_{s,i} - (m_{d,i} + k_{d,i})S_{d,i}+\sum_{j=1}^n\Phi^S_{ij}S_{d,j} -  lS_{d,i}\\
+	E_{d,i}'(t) = & \beta_{dd,i}  S_{d,i}I_{d,i} + \beta_{ds,i}  S_{d,i}I_{s,i} - lE_{d,i} - \sigma_{d,i} (1 - \gamma_{d,i}
+	)E_{d,i} +\\
+	& - \sigma_{d,i}\gamma_{d,i} E_{d,i} - (m_{d,i} + k_{d,i})E_{d,i}+\sum_{j=1}^n\Phi^E_{ij}E_{d,j}\\
+	I_{d,i}'(t) = & \sigma_{d,i}\gamma_{d,i} E_{d,i} - (m_{d,i} +
+	\mu_{d,i})I_{d,i}+\sum_{j=1}^n\Phi^I_{ij}I_{d,j} - \epsilon I_{d,i}\\
+	V_{d,i}'(t) =& k_{d,i}(S_{d,i} + E_{d,i}) - (m_{d,i} + \lambda_{d,i})V_{d,i} +\sum_{j=1}^n\Phi^V_{ij}V_{d,j} -  lI_{d,i}\\
+	S_{h,i}'(t) =& B + \lambda_{h,i}V_{h,i} + \sigma_{h,i}(1 - \gamma_{h,i} )E_{h,i}
+	- m_{h,i}S_{h,i} +\\
+	& - \beta_{hd,i}S_{h,i}I_{d,i} - \beta_{hs,i}S_{h,i}I_{s,i} + \sum_{j=1}^n\Psi^S_{ij}S_{h,j}\\
+	E_{h,i}'(t) =& \beta_{dh,i} S_{h,i}I_{d,i} - \sigma_{h,i}(1 - \gamma_{h,i}
+	)E_{h,i} - \sigma_{h,i}\gamma_{h,i}E_{h,i} +\\
+	& - (m_{h,i} + k_{h,i} )E_{h,i}	+\sum_{j=1}^n\Psi^E_{ij}E_{h,j}\\
+	I_{h,i}'(t) =& \sigma_{h,i}\gamma_{h,i}E_{h,i} - (m_{h,i} + \mu_{h,i})I_{h,i} +
+	\sum_{j=1}^n\Psi^I_{ij}I_{h,j}\\
+	V_{h,i}'(t) =& k_{h,i}E_{h,i} - (m_{h,i} + \lambda_{h,i}
+	)V_{h,i}+\sum_{j=1}^n\Psi^V_{ij}V_{h,j}\\
+	\end{cases}
+\end{align}
+\endgroup
+
+##SEIR: multi-patches with domestic and stray dogs and seasonal components
+The new transmission rate are:
+-$$\beta_{dd}(t)=a_{dd}[1 + b_{dd}sin( \frac{\pi}{6} t + 5.5)]$$
+-$$\beta_{ss}(t)=\beta_{ds}(t)=a_s[1 + b_ssin( \frac{\pi}{6} t + 5.5)]$$
+-$$\beta_{hd}(t)=\beta_{hs}(t)=a_h[1 + b_hsin( \frac{\pi}{6} t + 5.5)]$$
