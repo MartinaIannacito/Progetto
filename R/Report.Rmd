@@ -8,7 +8,7 @@ output:
     pdf_document:
       latex_engine: xelatex
       template: SelfArx-template.tex
-abstract: Rabies epidemic in china. reporduce some of the results presented in \cite{Cina}. Novel results.
+abstract: The first documents which record the presence of rabies in China date back to 5556 BC. Nowadays China is one of the country most affected by rabies, with an average of 1977 cases per year. Different mathematical models have been proposed to describe this epidemic. In this report, we reproduce some of the main results of \emph{Modeling the transmission dynamics and control of rabies in China} \cite{Cina}. Then, we present and numerically investigate two new models. In particular, we focus on simulating the effect of new rabies control strategies.
 ---
 # Introduction
 
@@ -669,7 +669,7 @@ numerical simulations.
 
 In \cite{Cina} the initial conditions of numerical simulations for multi-patch
 models are not reported. Thus, we cannot fully reproduce the original results.
-However, we can still use plausible values of the initial conditions to observe
+However, we can still use plausible values of the initial conditions (reported in Tab. \ref{tab:1}) to observe
 the qualitative behavior of the system. We focus on a two-patches model for the
 provinces of Hebei and Fujian. It is estimated that $R^{Hebei}_0=0.5477$ and
 $R^{Fujian}_0=0.8197$, so the disease would die out in both provinces since
@@ -678,6 +678,27 @@ immigration of dogs from Fujian to Hebei leads to the persistence of rabies in
 this province, as can be seen in Fig. \ref{fig:p1}. This example theoretically
 shows the possibility that the immigration of dogs can lead the disease to a
 worse scenario even if could be eliminated in each isolated patch.
+
+\renewcommand{\arraystretch}{1.2}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\begin{table}[!t]
+	\centering
+	\rowcolors{2}{NavyBlue!10}{white}
+	\begin{tabularx}{\linewidth}{XXXX}
+	\rowcolor{NavyBlue!80} \textbf{\color{white}Class} & \textbf{\color{white}Initial value} & \textbf{\color{white}Class} & \textbf{\color{white}Initial value} \\
+  	S$_{d,1}$ &$ 5 \cdot 10 ^ 5$& S$_{h,1}$ &$ 7.1 \cdot 10 ^ 7$\\
+  	S$_{d,2}$ &$ 2.4 \cdot 10 ^ 6$&S$_{h,2}$ &$ 3.8 \cdot 10 ^ 7$\\
+  	E$_{d,1}$ &$ 10 ^ 3$&E$_{h,1}$ &$ 10$\\
+  	E$_{d,2}$ &$ 2.9 \cdot 10 ^ 4$&E$_{h,2}$ &$ 50$\\
+  	I$_{d,1}$ &$ 10 ^ 3$&I$_{h,1}$ &$ 1$\\
+  	I$_{d,2}$ &$ 5 \cdot 10 ^ 4$&I$_{h,2}$ &$ 20$\\
+  	V$_{d,1}$ &$ 10 ^ 3$&V$_{h,1}$ &$ 6 \cdot 10 ^ 2$\\
+  	V$_{d,2}$ &$ 2 \cdot 10 ^ 4$&V$_{h,2}$ &$ 6 \cdot 10 ^ 2$\\
+  \end{tabularx}
+  \smallskip
+	\caption{Initial condition of the multi-patch SEIV model.}
+	\label{tab:1}
+\end{table}
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:p1}Simulations of the numbers of reported human rabies cases in Hebei and Fujian from 2004 to 2012. This plot attempts to reproduces Fig. 6.3 of \\cite{Cina}, using plausible values of the initial conditions."}
 source("SEIV_patch.R")
@@ -774,9 +795,17 @@ the multi-patch SEIV model for the provinces of Hebei and Fujian and the SEIV
 model with stray and domestic dogs. Furthermore, we assume that the Fujian
 province has a larger number of stray dogs than the Hebei province at $t=0$.
 
-Fig. \ref{fig:ps1} shows...
+The list of new parameters and the initial conditions of the model are reported
+int Tab. \ref{tab:1}. Parameters that are not present in Tab. \ref{tab:1} are
+assumed identical between stray and domestic dogs and equal to the ones reported
+in Fig. 6.3 of \cite{Cina}.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}plotting example"}
+Fig. \ref{fig:ps1} shows a numerical simulation of the number of exposed and
+infectious humans in the Hebei and Fujian provinces. We notice that the number
+of infected humans increases with time in both provinces, suggesting that the
+system moves away form the disease-free equilibrium.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}Numerical simulation of the number of exposed and infectious humand in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs."}
 source("SEIV_patch_stray.R")
 
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
@@ -794,16 +823,28 @@ Here we present an extension of the previous model, that takes into account the
 seasonal effect considered in \cite{Cina}. The structure of the model is
 identical to the one discussed in the previous section. In this model, the
 transmission rates are functions of time:
-$$\beta_{dd}(t)=\beta_{ss}(t)=\beta_{ds}(t)=a[1 + bsin( \frac{\pi}{6} t + 5.5)]$$
-$$\beta_{hd}(t)=\beta_{hs}(t)=a_1[1 + b_1sin( \frac{\pi}{6} t + 5.5)]$$
+$$\beta_{dd}(t)=a_{dd}[1 + b_{dd}sin( \frac{\pi}{6} t + 5.5)]$$
+$$\beta_{ss}(t)=\beta_{ds}(t)=a_s[1 + b_ssin( \frac{\pi}{6} t + 5.5)]$$
+$$\beta_{hd}(t)=\beta_{hs}(t)=a_h[1 + b_hsin( \frac{\pi}{6} t + 5.5)]$$
 For simplicity we assume that the transmission rates are unaffected by the dogs
-being stray or domestic. Taking this difference into account may result in a
-more realistic model, but would require additional parameters that we cannot
-estimate with the data available.
+being stray or domestic, with the exception of the transmission rate between
+domestic dogs, that we assume lower. Taking this difference into account may
+result in a more realistic model, but would require additional parameters that
+we cannot estimate with the data available.
 
-Fig. \ref{fig:pss1} shows...
+We use the same parameters and the same initial conditions used in the previous
+model, with the exception of the transmission rates. The parameters of the
+transmission rate are chosen such that the average transmission rate is the same
+as in the preious model (e.g $a_{dd}$=$\beta_{dd}$). The amplitudes of the
+oscillations are assumed proportional to the avreage transmission rates.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}plotting example"}
+Fig. \ref{fig:pss1} shows a numerical simulation of the number of exposed and
+infectious humand in the Hebei and Fujian provinces. We notice that the dynamic
+of the system is similar to the one presented in the previous model, with the
+addition of oscillations.  We can also notice that the system moves away form
+the disease-free equilibrium, as in the previous model.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}Numerical simulation of the number of exposed and infectious humand in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs and seasonal transmission rates."}
 source("SEIV_patch_stray_seasonal.R")
 
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
@@ -831,11 +872,22 @@ administration via bait \cite{Franka}.
 
 In this section, we examine the effect of three parameters on the diffusion of
 rabies: the culling rate of stray dogs, the vaccination rate of dogs and the
-fertility of stray dogs. In particular, we want to use our models to analyze
-what would be the effect of the administration of a dual immunocontraceptive
-vaccine.
+fertility of stray dogs. In particular, we want to use our multi-patch SEIV
+model with stray dogs and seasonal effects to analyze what would be the effect
+of the administration of a dual immunocontraceptive vaccine. We present only
+results for the Hebei province, since the ones for the Fujian province are
+qualitatively identical.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+### Culling rate of stray dogs
+
+First, we investigate how the increase in the culling rate of stray dogs
+affects the number of human infections. As we can see in Fig. \ref{fig:cull},
+increasing the culling rate to 0.655 years$^{-1}$ reduces the number of infected
+humans to zero. However, achieving such an high culling rate (which corresponds
+to eliminating 60\% of stray dogs every year) is economically unsostainable and
+can be considered unethical \cite{Franka}.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}Numerical simulation of the number of human rabies cases in the Hebei province for different values of the culling rate of stray dogs."}
 
 ggplot(data = I_h_1_df_cull_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "Culling rate",
@@ -844,16 +896,15 @@ ggplot(data = I_h_1_df_cull_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+### Birth rate of stray dogs
 
-ggplot(data = I_h_2_df_cull_long, aes(x = time, y = value, colour = variable)) +
-  geom_line() + scale_color_discrete(name = "Culling rate",
-    labels = c("0", "0.2", "0.4", "0.655")) +
-  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
-  xlab("time (months)")
-```
+A different apporach to reduce the stray dog population consists in reducing the
+birth rate of stray dogs, for instance using immunocontraceptive drugs. As we
+can see in Fig. \ref{fig:birth}, reducing the birth rate of stray dogs to 1/10
+of its value can be an effective strategy to reduce the number of rabies human
+cases to zero.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:birth}Numerical simulation of the number of human rabies cases in the Hebei province for different values of the birth rate of stray dogs."}
 
 ggplot(data = I_h_1_df_birth_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "birth rate multiplier",
@@ -862,16 +913,17 @@ ggplot(data = I_h_1_df_birth_long, aes(x = time, y = value, colour = variable)) 
   xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+### Vaccination rate of dogs
 
-ggplot(data = I_h_2_df_birth_long, aes(x = time, y = value, colour = variable)) +
-  geom_line() + scale_color_discrete(name = "birth rate multiplier",
-    labels = c("1", "0.5", "0.2", "0.1")) +
-  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
-  xlab("time (months)")
-```
+The WHO has recommended that a successful canine vaccination program should
+achieve at least 70\% coverage of canine population \cite{Franka}. We can test
+the effectiveness of this recommendation using our model. Fig. \ref{fig:vax}
+shows the the number of human rabies cases in the Hebei province for different
+values of the vaccination rate of stray and domestic dogs. We notica that a
+vaccination rate of 0.7 does indeed reduce the number of human rabies cases to
+zero.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:vax}Numerical simulation of the number of human rabies cases in the Hebei province for different values of the vaccination rate of stray and domestic dogs."}
 
 ggplot(data = I_h_1_df_vax_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "vaccination rate") +
@@ -879,13 +931,8 @@ ggplot(data = I_h_1_df_vax_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+### Effect of a dual immunocontraceptive vaccine
 
-ggplot(data = I_h_2_df_vax_long, aes(x = time, y = value, colour = variable)) +
-  geom_line() + scale_color_discrete(name = "vaccination rate") +
-  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
-  xlab("time (months)")
-```
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
 
@@ -896,14 +943,7 @@ ggplot(data = I_h_1_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)") + guides(col = guide_legend(nrow = 2))
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
 
-ggplot(data = I_h_2_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
-  geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
-    labels = c("1, 0.1", "2/3, 0.2", "2/3, 0.3", "1/2, 0.4")) +
-  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
-  xlab("time (months)") + guides(col = guide_legend(nrow = 2))
-```
 
 # Conclusions
 
@@ -931,7 +971,7 @@ impossible to estimate the accuracy of the new proposed patches model.
 	management. Lancet Neurol. 2013; 12(5):498-513.
 	
 	\bibitem{Cina} 
-	Ruan S.Modeling the transmission dynamics and control of rabies in China.
+	Ruan S. Modeling the transmission dynamics and control of rabies in China.
 	Mathematical biosciences 286. 2017; 65-93.
 	
 	\bibitem{54} 
