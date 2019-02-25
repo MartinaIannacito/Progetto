@@ -74,8 +74,8 @@ One of the most known model used to investigate the evolution of epidemics is
 SEIR. It is coherent to apply a basic SEIR model if the disease considered has
 an average duration shorter than the average time needed to observe significant
 modifications in the population structure. For example it can be applied to
-describe flu epidemics in the human species, since the average lifespan of a
-human being and the time needed to generate a new individual are on average
+describe chickenpox epidemics in the human species, since the average lifespan
+of a human being and the time needed to generate a new individual are on average
 longer than the duration of the flu. Under this assumption demographical aspects
 are negligible and consequently the model focuses only on the disease dynamic.
 In order to apply the model the total population $N(t)$ at time t is split into
@@ -156,8 +156,9 @@ the system (\ref{s2}) there is a unique positive solution.
 
 In order to make the model more realistic, it is convenient to introduce a
 simple vital dynamic with death rate $\mu$ equal to birth rate $\beta$. Under
-this hypothesis the population is still constant in time. The resulting system
-is:
+this hypothesis the population is still constant in time. It is also assumed
+that the newborns are susceptible, i.e. there is not a vertical transmission.
+The resulting system is:
 \begin{align}
   \label{s3}
 	\begin{cases}
@@ -248,7 +249,7 @@ ggplot(data = SEIR_out_long2, aes(x = time, y = value, colour = variable)) +
 ```
 
 The basic structure of the SEIR system can be adequately modified and used to
-describe the rabies epidemic behavior as in \cite{PAPERNOSTRO?}.
+describe the rabies epidemic behavior as in \cite{Cina}.
 
 # Reproduction of original results
 
@@ -261,7 +262,7 @@ therefore appropriate to describe this epidemic phenomena through a SEIR model
 for the dogs and the human population. The most important difference with the
 classical SEIR is that in this model only the exposed individuals that are
 subjected to PEP can move into the removed class. Moreover, the removed can
-loose immunity and get back to susceptible class. The ODE system is then:
+lose immunity and get back to susceptible class. The ODE system is then:
 
 \begingroup
 \setlength{\mathindent}{0pt}
@@ -279,11 +280,12 @@ loose immunity and get back to susceptible class. The ODE system is then:
 \end{align*}
 \endgroup
 
-The flow chart of the model and the respective parameters value are reported
-in \cite{Cina}. The system presents both the vitality and the epidemic
-dynamic. It is important to underline that the rate of loss of immunity for the
-dogs population has been added, compared to the original SEIR. The basic
-epidemic reproduction number can be computed \cite{23,96PapCinaBio} as:
+where the subscript $d$ denotes dogs class and the subscript $h$ denotes humans.
+The flow chart of the model and the respective parameters value are reported in
+\cite{Cina}. The system presents both the vitality and the epidemic dynamic. It
+is important to underline that the rate of loss of immunity for the dogs
+population has been added, compared to the original SEIR. The basic epidemic
+reproduction number can be computed \cite{23, 96} as:
 
 $$
 R_0=\frac{\beta_d\sigma_d\gamma_d}{(m_d+\kappa_d+\sigma_d)(m_d+\mu_d)}\frac{(m_d
@@ -303,15 +305,15 @@ Moreover, it can be proved that there are two equilibria:
 \end{itemize}
 
 The complete expression of $E^*$ as a function of the parameters can be found in
-\cite{Cina}. If the condition \ref{c2} is true, it can be proved that $E_0$
-is locally asymptotically stable in the region
+\cite{Cina}. If the condition \ref{c2} is false, it can be proved that $E_0$ is
+locally asymptotically stable and globally asymptotically stable in the region
 
 \begin{align*}
   \Gamma=&\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in(\mathbb{R}_+\cup\{0\})^8~\vert\\
   &0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\Bigr\}\\
 \end{align*}
 
-Moreover, if \ref{c2} holds, it can be shown that $E*$ is locally asymptotically
+Moreover, if \ref{c2} holds, it can be shown that $E^*$ is locally asymptotically
 stable in $\hat{\Gamma}=\Gamma-\Sigma$, where
 
 $$
@@ -319,7 +321,7 @@ $$
 $$
 and all the solution in $\Sigma$ tend toward the disease free equilibrium. A
 complete demonstration of the previous statement can be found in
-\cite{113papCinaBio}.
+\cite{113}.
 
 Finally, the parameters of the model can be estimated using the data collected
 by the Chinese Ministry of Health. Using these parameters, it can be shown that
@@ -327,7 +329,8 @@ the $R_0$ value for rabies in China is around 2. Therefore the epidemic moves
 towards the endemic equilibrium.
 
 A numerical simulation of the model from 1996, for a period of 50 years, is
-shown in Fig. \ref{fig:dh1}. The model indicates the tendency of the rabies
+shown in Fig. \ref{fig:dh1}. The parameter values used are the ones reported in
+the Table 2.1 of \cite{Cina}. The model indicates the tendency of the rabies
 epidemic to persist and move towards the endemic equilibrium.
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:dh1}Numerical simulations of rabies cases in China from 1996, for a period of 50 years. $S(t)$ and $R(t)$ are plotted in log$_{10}$ scale. The curve for $I(t)$ reproduces Fig. 2.2b of \\cite{Cina}."}
@@ -352,7 +355,7 @@ We can examine how the initial conditions influence the dynamic of $I(t)$. The
 initial conditions of dogs can influence both the number of human rabies cases
 and the time of rabies case peak, as shown in Fig. \ref{fig:dh2} Eventually, the
 differences become small. We also observe that the peak of the initial outbreak
-would be postponed if $S_d(0)$ is decreasing.
+would be postponed if $S_d(0)$ is reduced.
  
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dh2}Number of human rabies cases $I_h(t)$ for different initial values of the susceptible dog population $S_d(0)$. This plot reproduces Fig. 2.3a of \\cite{Cina}."}
 ggplot(data = I_h_df_long, aes(x = time, y = value, colour = variable)) +
@@ -385,10 +388,10 @@ a SEIV model with demographic dynamic at constant coefficients. In the SEIV
 model the removed class is replaced by the vaccinated class. In this case it is
 assumed that only susceptible and exposed domestic flow with a specific rate in
 the vaccinated class. Moreover it is assumed that domestic dogs can be abandoned
-and consequently the become stray in the respective class. It is also assumed
+and consequently become stray in the respective class at a constant rate. It is also assumed
 that only domestic dogs reproduce and that the stray dogs of all classes are
 culled at the same rate. For the human population it is coherently supposed that
-only exposed individuals are treated, so they can move in the vaccinated class.
+only exposed individuals are treated, so they move in the vaccinated class.
 The model can be presented as:
 
 \begingroup
@@ -411,8 +414,9 @@ The model can be presented as:
 	\end{cases}
 \end{align}
 \endgroup
-	
-It can be proved that if we set
+
+where the subscript $0$ denotes stray dogs, the subscript $1$ denotes domestic
+ones and the subscript $h$ denotes humans. It can be proved that if we set
 \begin{align*}
   X=&\Bigl\{(S_0, E_0, I_0,V_0, S_1, E_1, I_1,V_1, S_h, E_h, I_h,V_h )\in\mathbb{R}_+^{12}~\vert\\
   &E_0, I_0, E_1, I_1, E_h, I_h,V_h\in\mathbb{R}_+\cup\{0\}\Bigr\}\\
@@ -420,7 +424,7 @@ It can be proved that if we set
 the region
 \begin{align*}
 \Gamma =&\Bigl\{p\in X~\vert~S_0 + E_0 + I_0 + V_0 + S_1 + E_1 + I_1 +\\
-& V_1 + S_h + E_h +I_h+V_h\le\frac{A+H}{\min\{\mu + c, d,\mu_h\}}\Bigr\}\\
+& +V_1 + S_h + E_h +I_h+V_h\le\frac{A+H}{\min\{\mu + c, d,\mu_h\}}\Bigr\}\\
 \end{align*}
 is positively invariant.
 
@@ -428,19 +432,19 @@ It is proved that there are two equilibria
 \begin{itemize}
 	\item a disease free equilibrium
 	$E_0=(S_{0,0},0,0,V_{0,0},S_{1,0},0,0,$ $V_{1,0},S_{h,0},0,0,0)$ where the
-	complete expression is reported in \cite{paperNostro};
-	\item an endemic equilibrium $E*$ whose expression is  to complicate to
-	formally compute, which can be proved to exist if $R_0>1$\cite{papernostro}.
+	complete expression is reported in \cite{Cina};
+	\item an endemic equilibrium $E^*$ whose expression is  to complicate to
+	formally compute, which can be proved to exist if $R_0>1$\cite{Cina}.
 \end{itemize}
 
 After having computed $R_0$, whose expression is presented in
-\cite{paperNostro}, it can be proved that if $R_0<1$, $E_0$ is globally
+\cite{Cina}, it can be proved that if $R_0<1$, $E_0$ is globally
 asymptotically stable for system \ref{s4}.
 
 Numerical simulations can be performed using parameters estimated from data
-provided by the Department of Health of Guangdong Province. Fig. \ref{fig:dsh1}
-and Fig. \ref{fig:dsh2} show a simulation of human rabies infection cases over
-time for the Guangdong Province.
+provided by the Department of Health of Guangdong Province, reported in Table
+3.1 of \cite{Cina}. Fig. \ref{fig:dsh1} and Fig. \ref{fig:dsh2} show a
+simulation of human rabies infection cases over time for the Guangdong Province.
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:dsh1}Simulation of human rabies infection cases from 2006 to 2014 for the Guangdong Province of China. This plot reproduces Fig. 3.2 of \\cite{Cina}."}
 source("SEIR_dogs_stray_humans.R")
@@ -504,8 +508,8 @@ It is well-known that many diseases exhibit seasonal fluctuations. A number of
 phenomenons can be regarded as sources of periodicity, for instance seasonal
 changes in transmission rate and birth rate. The previous models failed to grasp
 this periodic component of the rabies epidemic. In this section, a new SEIR
-model that highlights seasonal changes in the transmission rate is examined. The
-model can be written as:
+model that highlights seasonal changes in the transmission rate is presented.
+The model can be written as:
 \begingroup
 \setlength{\mathindent}{0pt}
 \begin{align}
@@ -523,9 +527,10 @@ model can be written as:
 \end{align}
 \endgroup
 
-where the transmission rates are $\beta_d(t)=a[1 + bsin( \frac{\pi}{6} t + 5.5)]$
-and $\beta_{dh}(t)=a_1[1 + b_1sin( \frac{\pi}{6} t + 5.5)]$. Even in this
-case, if we set
+where the subscript $d$ denotes dogs, the subscript $h$ denotes humans and the
+transmission rates are $\beta_d(t)=a[1 + bsin( \frac{\pi}{6} t + 5.5)]$ and
+$\beta_{dh}(t)=a_1[1 + b_1sin( \frac{\pi}{6} t + 5.5)]$. Even in this case, if
+we set
 $$
 X=\Bigl\{(S_d, E_d, I_d, R_d, S_h, E_h, I_h, R_h )\in (\mathbb{R}_+\cup\{0\})^8\Bigr\}
 $$
@@ -537,19 +542,20 @@ it can be proved that there is a positively invariant region
 \end{align*}
 It is proved that the system \ref{s5} has 
 \begin{itemize}
-	\item a disease free equilibrium $E_0=(S_{0},0,0,R_{0},S_{h},0,0,0)$ where the
-	complete expression is reported in \cite{paperNostro}, which is globally
+	\item a disease free equilibrium $E_0=(S_{d,0},0,0,R_{d,0},S_{h,0},0,0,0)$
+	where the complete expression is reported in \cite{Cina}, which is globally
 	asymptotically stable for $R_0<1$;
-	\item at least one positive periodic solution \cite{111paperNostroBio}.
+	\item at least one positive periodic solution \cite{111}.
 \end{itemize}
 
 Fig. \ref{fig:s1} shows a numerical simulation of the model for the number of
 human rabies cases in China starting in 2004. Data from the Chinese Ministry of
-Health was used to estimate the parameters. Fig. \ref{fig:s2} shows the same
-simulation for the 4 SEIV classes. From these simulation we can see a reduction
-in the number of human rabies cases in the short future. However the epidemic is
-not eradicated, as we can see from a simulation of the same model for a period
-of 125 years (Fig. \ref{fig:s3}).
+Health was used to estimate the parameters, whose values are reported in Table
+4.1  of \cite{Cina}. Fig. \ref{fig:s2} shows the same simulation for the 4 SEIV
+classes. From these simulation we can see a reduction in the number of human
+rabies cases in the short future. However the epidemic is not eradicated, as we
+can see from a simulation of the same model for a period of 125 years (Fig.
+\ref{fig:s3}).
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:s1}Simulation of human rabies infection cases in China from 2004, for a period of 12.5 years. This plot reproduces Fig. 4.2a of \\cite{Cina}."}
 source("SEIR_seasonal.R")
@@ -603,8 +609,7 @@ In 2005 the Chinese government decided to monitor rabies at the national level
 in an attempt to obtain a more comprehensive epidemiological dataset. The data
 highlight that east China is epidemiologically related to adjoining provinces
 and to distant provinces. Moreover it has been demonstrated that there is a
-general trend of longitudinal transmission and latitudinal transmission
-\cite{106, 108}.
+general trend of longitudinal and latitudinal transmission \cite{106, 108}.
 	
 A new SIEV model is developed to analyze how the movement of dogs affects the
 spread of rabies. Reaction-diffusion equations are based on the assumptions that
@@ -672,7 +677,7 @@ their isolated basic reproduction numbers are less than one. However, the
 immigration of dogs from Fujian to Hebei leads to the persistence of rabies in
 this province, as can be seen in Fig. \ref{fig:p1}. This example theoretically
 shows the possibility that the immigration of dogs can lead the disease to a
-worse scenario even it could be eliminated in each isolated patch.
+worse scenario even if could be eliminated in each isolated patch.
 
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:p1}Simulations of the numbers of reported human rabies cases in Hebei and Fujian from 2004 to 2012. This plot attempts to reproduces Fig. 6.3 of \\cite{Cina}, using plausible values of the initial conditions."}
 source("SEIV_patch.R")
@@ -712,7 +717,7 @@ ODEs for the model is:
 	& - \beta_{ds,i}S_{s,i}I_{d,i} - (m_{s,i} + k_{s,i})S_{s,i}+\sum_{j=1}^nP^S_{ij}S_{s,j} + lS_{d,i}\\
 	E_{s,i}'(t) = & \beta_{ds,i}  S_{s,i}I_{d,i} + \beta_{ss,i}  S_{s,i}I_{s,i} + lE_{d,i} - \sigma_{s,i} (1 - \gamma_{s,i}
 	)E_{s,i} \\
-	& - \sigma_{s,i}\gamma_{s,i} E_{s,i} - (m_{s,i} + k_{s,i})E_{s,i}+\sum_{j=1}^nP^E_{ij}E_{s,j} + \\
+	& - \sigma_{s,i}\gamma_{s,i} E_{s,i} - (m_{s,i} + k_{s,i})E_{s,i}+\sum_{j=1}^nP^E_{ij}E_{s,j} \\
 	I_{s,i}'(t) = & \sigma_{s,i}\gamma_{s,i} E_{s,i} - (m_{s,i} +
 	\mu_{s,i})I_{s,i}+\sum_{j=1}^nP^I_{ij}I_{s,j} + \epsilon I_{d,i}\\
 	V_{s,i}'(t) =& k_{s,i}(S_{s,i} + E_{s,i}) - (m_{s,i} + \lambda_{s,i})V_{s,i} +\sum_{j=1}^nP^V_{ij}V_{s,j} + lI_{d,i}\\
@@ -738,6 +743,10 @@ ODEs for the model is:
 \end{align}
 \endgroup
 
+where the subscripts $s$, $d$ and $h$ respectively denote stray dogs, domestic
+dogs and humans and the subscript $i$ denotes the $i^{th}$ patch,
+$forall i\in\{1,\dots,n\}$.
+
 ```{r, include=FALSE}
 wdgt <- DiagrammeR::grViz("patch_SEIV.gv")
 wdgt_html_tf <- tempfile(fileext = ".html")
@@ -750,7 +759,13 @@ unlink(wdgt_html_tf)
 \begin{figure*}[!htb]
   \centering
   \includegraphics[width=\textwidth,trim = 4cm 7.1cm 2.5cm 1.2cm, clip]{patch_SEIV.pdf}
-  \caption{Flow chart of the SEIV model with stray and domestic dogs. The meaning of parameters is identical to the multi-patch model presentes in \cite{Cina}. Additional parameters not present in that model are: the transmission rated between the different classes $\beta_{dd}$, $\beta_{ds}$, $\beta_{ss}$, $\beta_{hd}$, $\beta_{hs}$,}; the abandonment rates of infectious and non-infectious domestic dog $\epsilon$ and $l$, respectively; the travel rate matrices of stray dogs $P^J$, $J=S,E,I,V$. 
+  \caption{Flow chart of the SEIV model with stray and domestic dogs. The
+  meaning of parameters is identical to the multi-patch model presentes in
+  \cite{Cina}. Additional parameters not present in that model are: the
+  transmission rated between the different classes $\beta_{dd}$, $\beta_{ds}$,
+  $\beta_{ss}$, $\beta_{hd}$, $\beta_{hs}$; the abandonment rates of infectious
+  and non-infectious domestic dogs $\epsilon$ and $l$, respectively; the travel
+  rate matrices of stray dogs $P^J$, $J=S,E,I,V$.}
   \label{fig:mess}
 \end{figure*}
 
@@ -764,9 +779,13 @@ Fig. \ref{fig:ps1} shows...
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}plotting example"}
 source("SEIV_patch_stray.R")
 
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_h_1), color = "blue") + 
-  geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class", labels =
+    c("E_h_Hebei", "E_h_Fujian", "I_h_Hebei", "I_h_Fujian")) +
+  myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
+   theme(legend.position="bottom", axis.title.y.right =
+    element_text(margin = margin(l = 20))) + 
+  xlab("time (months)")
 ```
 
 ## Multi-patch seasonal SEIV model
@@ -787,9 +806,13 @@ Fig. \ref{fig:pss1} shows...
 ```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}plotting example"}
 source("SEIV_patch_stray_seasonal.R")
 
-ggplot(data = as.data.frame(SEIR_out)) +
-  geom_line(mapping = aes(time, I_h_1), color = "blue") + 
-  geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "class", labels =
+    c("E_h_Hebei", "E_h_Fujian", "I_h_Hebei", "I_h_Fujian")) +
+  myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
+   theme(legend.position="bottom", axis.title.y.right =
+    element_text(margin = margin(l = 20))) + 
+  xlab("time (months)")
 ```
 
 ## Parameters

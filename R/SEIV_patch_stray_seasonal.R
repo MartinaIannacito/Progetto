@@ -32,13 +32,13 @@ SEIR <- function(t, state, pars) {
     beta_hs <- beta(a_hs, b_hs)
     
     dS_d <- A_d + lambda_d * V_d + sigma_d * (1 - gamma_d) * E_d - beta_dd(t) * S_d * I_d - (m_d + k_d) * S_d + phi_S %*% S_d - l * S_d - beta_ds(t) * S_d * I_s
-    dE_d <- beta_dd(t) * S_d * I_d - sigma_d * (1 - gamma_d) * E_d - sigma_d * gamma_d * E_d - (m_d + k_d) * E_d + phi_E %*% E_d - l_e * E_d + beta_ds(t) * S_d * I_s
-    dI_d <- sigma_d * gamma_d * E_d - (m_d + mu_d) * I_d + phi_I %*% I_d
+    dE_d <- beta_dd(t) * S_d * I_d - sigma_d * (1 - gamma_d) * E_d - sigma_d * gamma_d * E_d - (m_d + k_d) * E_d + phi_E %*% E_d - l * E_d + beta_ds(t) * S_d * I_s
+    dI_d <- sigma_d * gamma_d * E_d - (m_d + mu_d) * I_d + phi_I %*% I_d - l_i * I_d
     dV_d <- k_d * (S_d + E_d) - (m_d + lambda_d) * V_d + phi_V %*% V_d - l * V_d
     
     dS_s <- A_s + lambda_s * V_s + sigma_s * (1 - gamma_s) * E_s - beta_ss(t) * S_s * I_s - (m_s + k_s) * S_s + rho_S %*% S_s + l * S_d - beta_ds(t) * S_s * I_d
-    dE_s <- beta_ss(t) * S_s * I_s - sigma_s * (1 - gamma_s) * E_s - sigma_s * gamma_s * E_s - (m_s + k_s) * E_s + rho_E %*% E_s + l_e * E_d + beta_ds(t) * S_s * I_d
-    dI_s <- sigma_s * gamma_s * E_s - (m_s + mu_s) * I_s + rho_I %*% I_s
+    dE_s <- beta_ss(t) * S_s * I_s - sigma_s * (1 - gamma_s) * E_s - sigma_s * gamma_s * E_s - (m_s + k_s) * E_s + rho_E %*% E_s + l * E_d + beta_ds(t) * S_s * I_d
+    dI_s <- sigma_s * gamma_s * E_s - (m_s + mu_s) * I_s + rho_I %*% I_s + l_i * I_d
     dV_s <- k_s * (S_s + E_s) - (m_s + lambda_s) * V_s + rho_V %*% V_s + l * V_d
     
     dS_h <- B + lambda_h * V_h + sigma_h * (1 - gamma_h) * E_h - beta_hd(t) * S_h * I_d - m_h  * S_h + psi_S %*% S_h - beta_hs(t) * S_h * I_d
@@ -50,16 +50,35 @@ SEIR <- function(t, state, pars) {
   })
 }
 
-phi <- matrix(c(0, 0, 0, 0), nrow = 2)
-diag(phi) <- -rep(sum(phi), 2)
-psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
-diag(psi) <- -rep(sum(psi), 2)
+phi <- matrix(c(0, 0, 0, 0), nrow = 2) # assume domestic dogs don't move
 rho <- matrix(c(0, 0.05, 0.6, 0), nrow = 2)
-diag(rho) <- -rep(sum(rho), 2)
+diag(rho) <- -c(0.05, 0.6)
+psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
+diag(psi) <- -c(0.32, 0.2)
+
+# old amplitudes
+oa_dd = 12 * c(9.9, 9.9) * 10 ^ (-9) # reduced amplitude
+oa_ds = 12 * c(9.9, 9.9) * 10 ^ (-8)
+oa_ss = 12 * c(9.9, 9.9) * 10 ^ (-8)
+oa_hd = 12 * c(2.41, 2.41) * 10 ^ (-11)
+oa_hs = 12 * c(2.41, 2.41) * 10 ^ (-11)
+
+# old bs
+ob_dd = 12 * c(0.41, 0.41)
+ob_ds = 12 * c(0.41, 0.41)
+ob_ss = 12 * c(0.41, 0.41)
+ob_hd = 12 * c(0.23, 0.23)
+ob_hs = 12 * c(0.23, 0.23)
+
+a_dd = c(2.45, 2.2) * 10 ^ (-7) # lower transmission rate between domestics
+a_ds = c(2.45, 2.2) * 10 ^ (-6)
+a_ss = c(2.45, 2.2) * 10 ^ (-6)
+a_hd = c(2.2, 1.4) * 10 ^ (-11)
+a_hs = c(2.2, 1.4) * 10 ^ (-11)
 
 pars <- list(
-  A_d = c(3, 5) * 10 ^ 4,
-  A_s = c(4 * 10 ^ 3, 2.4 * 10), 
+  A_d = c(3, 5) * 10 ^ 5,
+  A_s = c(3, 5) * 10 ^ 5, # stray dogs can reproduce
   B = c(8.797, 4.101) * 10 ^ 5,
   lambda_d = rep(0.33, 2),
   lambda_s = rep(0.33, 2),
@@ -70,25 +89,30 @@ pars <- list(
   gamma_d = rep(0.4, 2) * 12,
   gamma_s = rep(0.4, 2) * 12,
   gamma_h = rep(0.475, 2) * 12,
-  m_d = rep(0.1, 2),
+  m_d = rep(0.1, 2), # reduced mortality of domestics
   m_s = rep(0.345, 2),
   m_h = rep(0.00662, 2),
   k_d = c(0.09, 0),
-  k_s = c(0, 0),
+  k_s = c(0.01, 0), # low vaccination rate of dogs
   k_h = rep(0.5, 2),
   mu_d = c(1, 1),
   mu_s = c(1, 1),
   mu_h = c(1, 1),
-  a_dd = 12 * c(9.9, 9.9) * 10 ^ (-8),
-  a_ds = 12 * c(9.9, 9.9) * 10 ^ (-7),
-  a_ss = 12 * c(9.9, 9.9) * 10 ^ (-7),
-  a_hd = 12 * c(4, 2.41) * 10 ^ (-11),
-  a_hs = 12 * c(4, 2.41) * 10 ^ (-10),
-  b_dd = 12 * c(0.41, 0.41),
-  b_ds = 12 * c(0.41, 0.41),
-  b_ss = 12 * c(0.41, 0.41),
-  b_hd = 12 * c(0.35, 0.23),
-  b_hs = 12 * c(0.35, 0.23),
+
+  # new amplitudes
+  a_dd = c(2.45, 2.2) * 10 ^ (-7), # lower transmission rate between domestics
+  a_ds = c(2.45, 2.2) * 10 ^ (-6),
+  a_ss = c(2.45, 2.2) * 10 ^ (-6),
+  a_hd = c(2.2, 1.4) * 10 ^ (-11),
+  a_hs = c(2.2, 1.4) * 10 ^ (-11),
+
+  # new bs
+  b_dd = ob_dd*a_dd/oa_dd,
+  b_ds = ob_ds*a_ds/oa_ds,
+  b_ss = ob_ss*a_ss/oa_ss,
+  b_hd = ob_hd*a_hd/oa_hd,
+  b_hs = ob_hs*a_hs/oa_hs,
+  
   phi_S = phi,
   phi_E = phi,
   phi_I = phi,
@@ -99,41 +123,41 @@ pars <- list(
   psi_V = psi,
   rho_S = rho,
   rho_E = rho,
-  rho_I = 3 * rho,
+  rho_I = rho,
   rho_V = rho,
   l = rep(0.014, 2),
-  l_e = c(0.14, 0.028)
+  l_i = c(0.1, 0.1)
 )
 
 pars <- lapply(pars, "/", 12)
 
 init <- c(
-  S_d_1 = 2.4 * 10 ^ 6,
+  S_d_1 = 5 * 10 ^ 5,
   S_d_2 = 2.4 * 10 ^ 6,
-  E_d_1 = 2.9 * 10 ^ 4,
+  E_d_1 = 10 ^ 3,
   E_d_2 = 2.9 * 10 ^ 4,
-  I_d_1 = 2 * 10 ^ 4,
-  I_d_2 = 2 * 10 ^ 4,
-  V_d_1 = 6 * 10 ^ 5,
-  V_d_2 = 6 * 10 ^ 5,
+  I_d_1 = 10 ^ 3,
+  I_d_2 = 5 * 10 ^ 4,
+  V_d_1 = 10 ^ 3,
+  V_d_2 = 2 * 10 ^ 4,
   
-  S_s_1 = 4 * 10 ^ 4,
-  S_s_2 = 2.4 * 10 ^ 2,
-  E_s_1 = 4 * 10 ^ 2,
-  E_s_2 = 20,
-  I_s_1 = 2.04 * 10 ^ 3,
-  I_s_2 = 1,
+  S_s_1 = 6 * 10 ^ 3,
+  S_s_2 = 4 * 10 ^ 4,
+  E_s_1 = 20,
+  E_s_2 =  4 * 10 ^ 2,
+  I_s_1 = 30,
+  I_s_2 = 2.04 * 10 ^ 3,
   V_s_1 = 0,
   V_s_2 = 0,
   
-  S_h_1 = 7.988 * 10 ^ 7,
-  S_h_2 = 7.988 * 10 ^ 7,
-  E_h_1 = 7.13 * 10 ^ 2,
-  E_h_2 = 7.13 * 10 ^ 2,
-  I_h_1 = 20,
-  I_h_2 = 1,
-  V_h_1 = 6 * 10 ^ 5,
-  V_h_2 = 6 * 10 ^ 5
+  S_h_1 = 7.1 * 10 ^ 7,
+  S_h_2 = 3.8 * 10 ^ 7,
+  E_h_1 = 10,
+  E_h_2 = 50,
+  I_h_1 = 1,
+  I_h_2 = 20,
+  V_h_1 = 6 * 10 ^ 2,
+  V_h_2 = 6 * 10 ^ 2
 )
 
 times <- seq(1, 50 * 12, by = 1)
@@ -149,7 +173,9 @@ myTheme <- theme(axis.text = element_text(size = 20),
   panel.grid.major = element_line(colour = "grey90"),
   panel.grid.minor = element_line(colour = "grey90"),
   axis.line = element_line(color = "black", size = .7),
-  plot.title = element_text(hjust = 0.5, size = 25))
+  plot.title = element_text(hjust = 0.5, size = 25),
+  legend.text = element_text(size = 13),
+  legend.title= element_text(size = 15))
 
 # Dogs
 
@@ -168,4 +194,25 @@ ggplot(data = as.data.frame(SEIR_out)) +
 ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h_1), color = "blue") + 
   geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
+
+################################################################################
+# PLOTS WITH ALL HUMANS
+################################################################################
+
+data <- SEIR_out[, c("time", "E_h_1", "E_h_2", "I_h_1", "I_h_2")]
+#data[, c("S_h", "V_h")] <- log10(data[, c("S_h", "V_h")])*100
+
+#labels <- 10^(seq(0, 9, by = 1))
+#breaks <- log10(labels)*100
+
+SEIR_out_long <- reshape2::melt(as.data.frame(data), id = "time")
+
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() +
+  scale_color_discrete(name = "class", labels =
+      c(latex2exp::TeX("$E_h^{Hebei}$"), "2", "3", "4")) +
+  myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
+  theme(legend.position="bottom",
+    axis.title.y.right = element_text(margin = margin(l = 20))) + 
+  xlab("time (months)")
 

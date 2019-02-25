@@ -40,15 +40,15 @@ SEIR <- function(t, state, pars) {
   })
 }
 
-phi <- matrix(c(0, 0, 0, 0), nrow = 2)
+phi <- matrix(c(0, 0, 0, 0), nrow = 2) # assume domestic dogs don't move
 rho <- matrix(c(0, 0.05, 0.6, 0), nrow = 2)
 diag(rho) <- -c(0.05, 0.6)
 psi <- matrix(c(0, 0.32, 0.2, 0), nrow = 2)
 diag(psi) <- -c(0.32, 0.2)
 
 pars <- list(
-  A_d = c(3, 5) * 10 ^ 4,
-  A_s = c(4 * 10 ^ 3, 2.4 * 10), 
+  A_d = c(3, 5) * 10 ^ 5,
+  A_s = c(3, 5) * 10 ^ 5, # stray dogs can reproduce
   B = c(8.797, 4.101) * 10 ^ 5,
   lambda_d = rep(0.33, 2),
   lambda_s = rep(0.33, 2),
@@ -59,20 +59,20 @@ pars <- list(
   gamma_d = rep(0.4, 2) * 12,
   gamma_s = rep(0.4, 2) * 12,
   gamma_h = rep(0.475, 2) * 12,
-  m_d = rep(0.1, 2),
+  m_d = rep(0.1, 2), # reduced mortality of domestics
   m_s = rep(0.345, 2),
   m_h = rep(0.00662, 2),
   k_d = c(0.09, 0),
-  k_s = c(0, 0),
+  k_s = c(0.01, 0), # low vaccination rate of dogs
   k_h = rep(0.5, 2),
   mu_d = c(1, 1),
   mu_s = c(1, 1),
   mu_h = c(1, 1),
-  beta_dd = c(3.2, 3) * 10 ^ (-7),
-  beta_ds = c(4, 3.5) * 10 ^ (-6),
-  beta_ss = c(8, 7.5) * 10 ^ (-6),
+  beta_dd = c(2.45, 2.2) * 10 ^ (-7), # lower transmission rate between domestics
+  beta_ds = c(2.45, 2.2) * 10 ^ (-6),
+  beta_ss = c(2.45, 2.2) * 10 ^ (-6),
   beta_hd = c(2.2, 1.4) * 10 ^ (-11),
-  beta_hs = c(2.2, 1.4) * 10 ^ (-10),
+  beta_hs = c(2.2, 1.4) * 10 ^ (-11),
   phi_S = phi,
   phi_E = phi,
   phi_I = phi,
@@ -83,41 +83,41 @@ pars <- list(
   psi_V = psi,
   rho_S = rho,
   rho_E = rho,
-  rho_I = 3 * rho,
+  rho_I = rho,
   rho_V = rho,
   l = rep(0.014, 2),
-  l_i = c(0.14, 0.028)
+  l_i = c(0.1, 0.1)
 )
 
 pars <- lapply(pars, "/", 12)
 
 init <- c(
-  S_d_1 = 2.4 * 10 ^ 6,
+  S_d_1 = 5 * 10 ^ 5,
   S_d_2 = 2.4 * 10 ^ 6,
-  E_d_1 = 2.9 * 10 ^ 4,
+  E_d_1 = 10 ^ 3,
   E_d_2 = 2.9 * 10 ^ 4,
-  I_d_1 = 2 * 10 ^ 4,
-  I_d_2 = 2 * 10 ^ 4,
-  V_d_1 = 6 * 10 ^ 5,
-  V_d_2 = 6 * 10 ^ 5,
+  I_d_1 = 10 ^ 3,
+  I_d_2 = 5 * 10 ^ 4,
+  V_d_1 = 10 ^ 3,
+  V_d_2 = 2 * 10 ^ 4,
   
-  S_s_1 = 4 * 10 ^ 4,
-  S_s_2 = 2.4 * 10 ^ 2,
-  E_s_1 = 4 * 10 ^ 2,
-  E_s_2 = 20,
-  I_s_1 = 2.04 * 10 ^ 3,
-  I_s_2 = 1,
+  S_s_1 = 6 * 10 ^ 3,
+  S_s_2 = 4 * 10 ^ 4,
+  E_s_1 = 20,
+  E_s_2 =  4 * 10 ^ 2,
+  I_s_1 = 30,
+  I_s_2 = 2.04 * 10 ^ 3,
   V_s_1 = 0,
   V_s_2 = 0,
   
-  S_h_1 = 7.988 * 10 ^ 7,
-  S_h_2 = 7.988 * 10 ^ 7,
-  E_h_1 = 7.13 * 10 ^ 2,
-  E_h_2 = 7.13 * 10 ^ 2,
-  I_h_1 = 20,
-  I_h_2 = 1,
-  V_h_1 = 6 * 10 ^ 5,
-  V_h_2 = 6 * 10 ^ 5
+  S_h_1 = 7.1 * 10 ^ 7,
+  S_h_2 = 3.8 * 10 ^ 7,
+  E_h_1 = 10,
+  E_h_2 = 50,
+  I_h_1 = 1,
+  I_h_2 = 20,
+  V_h_1 = 6 * 10 ^ 2,
+  V_h_2 = 6 * 10 ^ 2
 )
 
 times <- seq(1, 50 * 12, by = 1)
@@ -133,7 +133,9 @@ myTheme <- theme(axis.text = element_text(size = 20),
   panel.grid.major = element_line(colour = "grey90"),
   panel.grid.minor = element_line(colour = "grey90"),
   axis.line = element_line(color = "black", size = .7),
-  plot.title = element_text(hjust = 0.5, size = 25))
+  plot.title = element_text(hjust = 0.5, size = 25),
+  legend.text = element_text(size = 13),
+  legend.title= element_text(size = 15))
 
 # Dogs
 
@@ -146,6 +148,10 @@ ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_s_2), color = "red") + myTheme
 
 ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_d_1), color = "blue") + 
+  geom_line(mapping = aes(time, S_d_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, S_s_1), color = "blue") + 
   geom_line(mapping = aes(time, S_s_2), color = "red") + myTheme
 
@@ -153,3 +159,35 @@ ggplot(data = as.data.frame(SEIR_out)) +
   geom_line(mapping = aes(time, I_h_1), color = "blue") + 
   geom_line(mapping = aes(time, I_h_2), color = "red") + myTheme
 
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, E_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, E_h_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, S_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, S_h_2), color = "red") + myTheme
+
+ggplot(data = as.data.frame(SEIR_out)) +
+  geom_line(mapping = aes(time, V_h_1), color = "blue") + 
+  geom_line(mapping = aes(time, V_h_2), color = "red") + myTheme
+
+################################################################################
+# PLOTS WITH ALL HUMANS
+################################################################################
+
+data <- SEIR_out[, c("time", "E_h_1", "E_h_2", "I_h_1", "I_h_2")]
+#data[, c("S_h", "V_h")] <- log10(data[, c("S_h", "V_h")])*100
+
+#labels <- 10^(seq(0, 9, by = 1))
+#breaks <- log10(labels)*100
+
+SEIR_out_long <- reshape2::melt(as.data.frame(data), id = "time")
+
+ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() +
+  scale_color_discrete(name = "class", labels =
+      c(latex2exp::TeX("$E_h^{Hebei}$"), "2", "3", "4")) +
+  myTheme + ylab(latex2exp::TeX("$E_h$, $I_h$")) +
+   theme(legend.position="bottom",
+    axis.title.y.right = element_text(margin = margin(l = 20))) + 
+  xlab("time (months)")
