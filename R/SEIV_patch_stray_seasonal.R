@@ -216,3 +216,150 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
     axis.title.y.right = element_text(margin = margin(l = 20))) + 
   xlab("time (months)")
 
+################################################################################
+# ANALYSIS OF DIFFERENT VALUES OF PARAMETERS
+################################################################################
+
+# culling rate of stray dogs, corresponds to increase in mortality rate,
+# irrespective of class
+library(latex2exp)
+
+cull_vect <- c(0.345, 0.545, 0.745, 1) # 0, 0.2, 0.5, max
+
+ode_system_cull <- function(cull_rate) {
+  pars[["m_s"]] <- rep(cull_rate, 2) / 12
+  times <- seq(1, 50*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_cull <- lapply(cull_vect, ode_system_cull)
+
+I_h_1_df_cull <- as.data.frame(lapply(res_cull, `[`, , "I_h_1"))
+I_h_2_df_cull <- as.data.frame(lapply(res_cull, `[`, , "I_h_2"))
+colnames(I_h_1_df_cull) <- cull_vect
+colnames(I_h_2_df_cull) <- cull_vect
+I_h_1_df_cull <- cbind(I_h_1_df_cull, time = res_cull[[1]][,"time"])
+I_h_2_df_cull <- cbind(I_h_2_df_cull, time = res_cull[[1]][,"time"])
+I_h_1_df_cull_long <- reshape2::melt(I_h_1_df_cull, id = "time")
+I_h_2_df_cull_long <- reshape2::melt(I_h_2_df_cull, id = "time")
+
+ggplot(data = I_h_1_df_cull_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "culling rate",
+    labels = c("0", "0.2", "0.4", "0.655")) +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+ggplot(data = I_h_2_df_cull_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "culling rate",
+    labels = c("0", "0.2", "0.4", "0.655")) +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+#-------------------------------------------------------------------------------
+
+# reduce fertility of stray dogs
+
+birth_vect <- matrix(c(3,5,1.5,2.5,0.6,1,0.3,0.5), nrow = 2) * 10^5
+
+ode_system_birth <- function(birth_rate) {
+  pars[["A_s"]] <- birth_rate / 12
+  times <- seq(1, 50*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_birth <- plyr::alply(birth_vect, 2, ode_system_birth)
+
+I_h_1_df_birth <- as.data.frame(lapply(res_birth, `[`, , "I_h_1"))
+I_h_2_df_birth <- as.data.frame(lapply(res_birth, `[`, , "I_h_2"))
+#colnames(I_h_1_df_birth) <- birth_vect
+#colnames(I_h_2_df_birth) <- birth_vect
+I_h_1_df_birth <- cbind(I_h_1_df_birth, time = res_birth[[1]][,"time"])
+I_h_2_df_birth <- cbind(I_h_2_df_birth, time = res_birth[[1]][,"time"])
+I_h_1_df_birth_long <- reshape2::melt(I_h_1_df_birth, id = "time")
+I_h_2_df_birth_long <- reshape2::melt(I_h_2_df_birth, id = "time")
+
+ggplot(data = I_h_1_df_birth_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier",
+    labels = c("1", "0.5", "0.2", "0.1")) +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+ggplot(data = I_h_2_df_birth_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier",
+    labels = c("1", "0.5", "0.2", "0.1")) +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+#-------------------------------------------------------------------------------
+
+# increase vaccination rate of stray dogs
+
+vax_vect <- c(0.1, 0.4, 0.6, 0.7)
+
+ode_system_vax <- function(vax_rate) {
+  pars[["k_s"]] <- rep(vax_rate, 2) / 12
+  pars[["k_d"]] <- rep(vax_rate, 2) / 12
+  times <- seq(1, 80*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_vax <- lapply(vax_vect, ode_system_vax)
+
+I_h_1_df_vax <- as.data.frame(lapply(res_vax, `[`, , "I_h_1"))
+I_h_2_df_vax <- as.data.frame(lapply(res_vax, `[`, , "I_h_2"))
+colnames(I_h_1_df_vax) <- vax_vect
+colnames(I_h_2_df_vax) <- vax_vect
+I_h_1_df_vax <- cbind(I_h_1_df_vax, time = res_vax[[1]][,"time"])
+I_h_2_df_vax <- cbind(I_h_2_df_vax, time = res_vax[[1]][,"time"])
+I_h_1_df_vax_long <- reshape2::melt(I_h_1_df_vax, id = "time")
+I_h_2_df_vax_long <- reshape2::melt(I_h_2_df_vax, id = "time")
+
+ggplot(data = I_h_1_df_vax_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "vaccination rate") +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+ggplot(data = I_h_2_df_vax_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "vaccination rate") +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+#-------------------------------------------------------------------------------
+
+# reduce birth rate, increase vaccination rate
+
+gnrh_vect <- matrix(c(3,5,2,10/3,2,10/3,1.5,2.5), nrow = 2) * 10^5
+gnrh_vect <- rbind(gnrh_vect, c(0.1, 0.2, 0.3, 0.4))
+
+ode_system_gnrh <- function(gnrh_rate) {
+  pars[["A_s"]] <- gnrh_rate[1:2] / 12
+  pars[["k_s"]] <- gnrh_rate[3] / 12
+  pars[["k_d"]] <- gnrh_rate[3] / 12
+  times <- seq(1, 50*12, by = 1)
+  ode(init, times, SEIR, pars)
+}
+
+res_gnrh <- plyr::alply(gnrh_vect, 2, ode_system_gnrh)
+
+I_h_1_df_gnrh <- as.data.frame(lapply(res_gnrh, `[`, , "I_h_1"))
+I_h_2_df_gnrh <- as.data.frame(lapply(res_gnrh, `[`, , "I_h_2"))
+#colnames(I_h_1_df_gnrh) <- gnrh_vect
+#colnames(I_h_2_df_gnrh) <- gnrh_vect
+I_h_1_df_gnrh <- cbind(I_h_1_df_gnrh, time = res_gnrh[[1]][,"time"])
+I_h_2_df_gnrh <- cbind(I_h_2_df_gnrh, time = res_gnrh[[1]][,"time"])
+I_h_1_df_gnrh_long <- reshape2::melt(I_h_1_df_gnrh, id = "time")
+I_h_2_df_gnrh_long <- reshape2::melt(I_h_2_df_gnrh, id = "time")
+
+ggplot(data = I_h_1_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
+    labels = c("1, 0.1", "2/3, 0.2", "2/3, 0.3", "1/2, 0.4")) +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+ggplot(data = I_h_2_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
+    labels = c("1, 0.1", "2/3, 0.2", "2/3, 0.3", "1/2, 0.4")) +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+
+

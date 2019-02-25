@@ -2,7 +2,7 @@
 title: SIER models for rabies epidemic in China
 author: Martina Iannacito\textsuperscript{1} and Matteo Ciciani\textsuperscript{2}
 affiliation:
-  - \textsuperscript{1}\textit{...}
+  - \textsuperscript{1}\textit{Master in Mathematics for Life and Data Science, University of Trento, Italy}
   - \textsuperscript{2}\textit{Master in Quantitative and Computational Biology, University of Trento, Italy}
 output:
     pdf_document:
@@ -815,11 +815,11 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)")
 ```
 
-## Parameters
+## Graphical analysis of parameters
 
 The current literature suggests that culling of stray dogs in order to reduce
-the dg population is an uneffective and insostenible strategy. New approaches to
-reduce the dog population have been proposed, such as the use of
+the dog population is an uneffective and insostenible strategy. New approaches
+to reduce the dog population have been proposed, such as the use of
 immunocontraceptive drugs, like GonaCon, a synthetic gonadotrophin-releasing
 hormone (GnRH) which is able to induce long-term reduction of fertility in both
 genders. It has also been proposed that GnRH could be administered together with
@@ -834,6 +834,76 @@ rabies: the culling rate of stray dogs, the vaccination rate of dogs and the
 fertility of stray dogs. In particular, we want to use our models to analyze
 what would be the effect of the administration of a dual immunocontraceptive
 vaccine.
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_1_df_cull_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "Culling rate",
+    labels = c("0", "0.2", "0.4", "0.655")) +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_2_df_cull_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "Culling rate",
+    labels = c("0", "0.2", "0.4", "0.655")) +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_1_df_birth_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier",
+    labels = c("1", "0.5", "0.2", "0.1")) +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_2_df_birth_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier",
+    labels = c("1", "0.5", "0.2", "0.1")) +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_1_df_vax_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "vaccination rate") +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_2_df_vax_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "vaccination rate") +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)")
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_1_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
+    labels = c("1, 0.1", "2/3, 0.2", "2/3, 0.3", "1/2, 0.4")) +
+  myTheme + ylab(TeX("$I_{h, Hebei}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)") + guides(col = guide_legend(nrow = 2))
+```
+
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+
+ggplot(data = I_h_2_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
+  geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
+    labels = c("1, 0.1", "2/3, 0.2", "2/3, 0.3", "1/2, 0.4")) +
+  myTheme + ylab(TeX("$I_{h, Fujian}$")) + theme(legend.position="bottom") + 
+  xlab("time (months)") + guides(col = guide_legend(nrow = 2))
+```
 
 # Conclusions
 
