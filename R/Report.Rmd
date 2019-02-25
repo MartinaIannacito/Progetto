@@ -1,5 +1,5 @@
 ---
-title: SIER models for rabies epidemic in China
+title: SEIR models for rabies epidemic in China
 author: Martina Iannacito\textsuperscript{1} and Matteo Ciciani\textsuperscript{2}
 affiliation:
   - \textsuperscript{1}\textit{Master in Mathematics for Life and Data Science, University of Trento, Italy}
@@ -221,10 +221,10 @@ Using the Routh-Hurwitz conditions, it can be proved as in \cite{mate1} that the
 endemic equilibrium, when it exists, is asymptotically stable.
 
 Numerical simulation for the a generic SEIR model are shown in Fig.
-\ref{fig:gen1} and \ref{fig:gen2}, for values of $R_0>1$ and $R_0<1$,
-respectively.
+\ref{fig:gen1} and \ref{fig:gen2}, for values of $R_0>1+\frac{\beta}{\rho}$
+and $R_0<1+\frac{\beta}{\rho}$, respectively.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen1}Numerical simulation of a SEIR model with $R_0>1$. We can see that the system convergest to the endemic equilibrium."}
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen1}Numerical simulation of a SEIR model with $R_0>1+\\frac{\\beta}{\\rho}$. We can see that the system convergest to the endemic equilibrium."}
 source("SEIR_general.R")
 
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
@@ -236,7 +236,7 @@ ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
   xlab("time")
 ```
 
-```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen2}Numerical simulation of a SEIR model with $R_0<1$. We can see that the system convergest to the disease-free equilibrium."}
+```{r, echo=FALSE, fig.width=7, fig.height=6,fig.cap="\\label{fig:gen2}Numerical simulation of a SEIR model with $R_0<1+\\frac{\\beta}{\\rho}$. We can see that the system convergest to the disease-free equilibrium."}
 source("SEIR_general.R")
 
 ggplot(data = SEIR_out_long2, aes(x = time, y = value, colour = variable)) +
@@ -294,10 +294,9 @@ $$
 
 Moreover, it can be proved that there are two equilibria:
 \begin{itemize}
-	\item a disease free equilibrium $E_0=(S_{d,0},0,0,R_{d,0},S_{h,0},0,0,0)$;
-	\item an endemic equilibrium
-	$E^*=(S^*_d,E^*_d,I^*_d,R^*_{d},S^*_{h},E^*_h,I^*_h,R^*_h)$ which exists if 
-	and only if holds the condition
+	\item a disease free equilibrium $E_0=(S_{d,0},0,0,R_{d,0},S_{h,0},0$, $0,0)$;
+	\item an endemic equilibrium $E^*=(S^*_d,E^*_d,I^*_d,R^*_{d},S^*_{h},E^*_h,I^*_h$,
+	$R^*_h)$ which exists if and only if holds the condition
 	\begin{equation}
 		\label{c2}
 		R_0>1.
@@ -426,9 +425,7 @@ the region
 \Gamma =&\Bigl\{p\in X~\vert~S_0 + E_0 + I_0 + V_0 + S_1 + E_1 + I_1 +\\
 & +V_1 + S_h + E_h +I_h+V_h\le\frac{A+H}{\min\{\mu + c, d,\mu_h\}}\Bigr\}\\
 \end{align*}
-is positively invariant.
-
-It is proved that there are two equilibria 
+is positively invariant. It is proved that there are two equilibria 
 \begin{itemize}
 	\item a disease free equilibrium
 	$E_0=(S_{0,0},0,0,V_{0,0},S_{1,0},0,0,$ $V_{1,0},S_{h,0},0,0,0)$ where the
@@ -504,12 +501,12 @@ ggplot(data = I_h_df_long_3, aes(x = time, y = value, colour = variable)) +
 
 ## Seasonal SEIR model
 
-It is well-known that many diseases exhibit seasonal fluctuations. A number of
-phenomenons can be regarded as sources of periodicity, for instance seasonal
-changes in transmission rate and birth rate. The previous models failed to grasp
-this periodic component of the rabies epidemic. In this section, a new SEIR
-model that highlights seasonal changes in the transmission rate is presented.
-The model can be written as:
+It is well-known that many diseases exhibit seasonal fluctuations \cite{54}. A
+number of phenomenons can be regarded as sources of periodicity, for instance
+seasonal changes in transmission rate and birth rate \cite{78}. The previous
+models failed to grasp this periodic component of the rabies epidemic. In this
+section, a new SEIR model that highlights seasonal changes in the transmission
+rate is presented. The model can be written as:
 \begingroup
 \setlength{\mathindent}{0pt}
 \begin{align}
@@ -540,9 +537,9 @@ it can be proved that there is a positively invariant region
 \Gamma =&\Bigl\{p\in X~\vert~0 < S_d + E_d + I_d + R_d \le \frac{A}{m_d}\text{ and }\\
 &0 < S_h + E_h + I_h + R_h \le \frac{B}{m_h}\Bigr\}\\
 \end{align*}
-It is proved that the system \ref{s5} has 
+It is proved that system \ref{s5} has 
 \begin{itemize}
-	\item a disease free equilibrium $E_0=(S_{d,0},0,0,R_{d,0},S_{h,0},0,0,0)$
+	\item a disease free equilibrium $E_0=(S_{d,0},0,0,R_{d,0},S_{h,0},0$, $0,0)$
 	where the complete expression is reported in \cite{Cina}, which is globally
 	asymptotically stable for $R_0<1$;
 	\item at least one positive periodic solution \cite{111}.
@@ -611,7 +608,7 @@ highlight that east China is epidemiologically related to adjoining provinces
 and to distant provinces. Moreover it has been demonstrated that there is a
 general trend of longitudinal and latitudinal transmission \cite{106, 108}.
 	
-A new SIEV model is developed to analyze how the movement of dogs affects the
+A new SEIV model is developed to analyze how the movement of dogs affects the
 spread of rabies. Reaction-diffusion equations are based on the assumptions that
 the spatial domain is connected and the movement of dogs is a continuous process
 in the domain. These assumptions cannot be considered satisfied in China. Thus,
@@ -669,19 +666,20 @@ numerical simulations.
 
 In \cite{Cina} the initial conditions of numerical simulations for multi-patch
 models are not reported. Thus, we cannot fully reproduce the original results.
-However, we can still use plausible values of the initial conditions (reported in Tab. \ref{tab:1}) to observe
-the qualitative behavior of the system. We focus on a two-patches model for the
-provinces of Hebei and Fujian. It is estimated that $R^{Hebei}_0=0.5477$ and
-$R^{Fujian}_0=0.8197$, so the disease would die out in both provinces since
-their isolated basic reproduction numbers are less than one. However, the
-immigration of dogs from Fujian to Hebei leads to the persistence of rabies in
-this province, as can be seen in Fig. \ref{fig:p1}. This example theoretically
-shows the possibility that the immigration of dogs can lead the disease to a
-worse scenario even if could be eliminated in each isolated patch.
+However, we can still use plausible values of the initial conditions (reported
+in Tab. \ref{tab:1}) to observe the qualitative behavior of the system. We focus
+on a two-patches model for the provinces of Hebei and Fujian. It is estimated
+that $R^{Hebei}_0=0.5477$ and $R^{Fujian}_0=0.8197$, so the disease would die
+out in both provinces since their isolated basic reproduction numbers are less
+than one. However, the immigration of dogs from Fujian to Hebei leads to the
+persistence of rabies in this province, as can be seen in Fig. \ref{fig:p1}.
+This example theoretically shows the possibility that the immigration of dogs
+can lead the disease to a worse scenario even if could be eliminated in each
+isolated patch.
 
 \renewcommand{\arraystretch}{1.2}
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
-\begin{table}[!t]
+\begin{table}[!htb]
 	\centering
 	\rowcolors{2}{NavyBlue!10}{white}
 	\begin{tabularx}{\linewidth}{XXXX}
@@ -695,7 +693,6 @@ worse scenario even if could be eliminated in each isolated patch.
   	V$_{d,1}$ &$ 10 ^ 3$&V$_{h,1}$ &$ 6 \cdot 10 ^ 2$\\
   	V$_{d,2}$ &$ 2 \cdot 10 ^ 4$&V$_{h,2}$ &$ 6 \cdot 10 ^ 2$\\
   \end{tabularx}
-  \smallskip
 	\caption{Initial condition of the multi-patch SEIV model.}
 	\label{tab:1}
 \end{table}
@@ -790,22 +787,69 @@ unlink(wdgt_html_tf)
   \label{fig:mess}
 \end{figure*}
 
-For this model we use parameters taken form the previous models, in particular
+For this model we use parameters taken from the previous models, in particular
 the multi-patch SEIV model for the provinces of Hebei and Fujian and the SEIV
 model with stray and domestic dogs. Furthermore, we assume that the Fujian
 province has a larger number of stray dogs than the Hebei province at $t=0$.
 
 The list of new parameters and the initial conditions of the model are reported
-int Tab. \ref{tab:1}. Parameters that are not present in Tab. \ref{tab:1} are
-assumed identical between stray and domestic dogs and equal to the ones reported
-in Fig. 6.3 of \cite{Cina}.
+int Tab. \ref{tab:2} and Tab. \ref{tab:3}. Parameters that are not present in
+Tab. \ref{tab:2} are assumed identical between stray and domestic dogs and equal
+to the ones reported in Fig. 6.3 of \cite{Cina}.
+
+\begin{table}[!htb]
+	\centering
+	\rowcolors{2}{white}{NavyBlue!10}
+	\begin{tabularx}{\linewidth}{XlXlXl}
+	\rowcolor{NavyBlue!80} \textbf{\color{white}Class} & \textbf{\color{white}Initial} & \textbf{\color{white}Class} & \textbf{\color{white}Initial} & \textbf{\color{white}Class} & \textbf{\color{white}Initial} \\
+	\rowcolor{NavyBlue!80} & \textbf{\color{white}value} & & \textbf{\color{white}value} & & \textbf{\color{white} value} \\
+    S$_{d,1}$ &$ 5 \cdot 10 ^ 5$& S$_{s,1}$ &$ 6 \cdot 10 ^ 3$&S$_{h,1}$ &$ 7.1 \cdot 10 ^ 7$\\
+    S$_{d,2}$ &$ 2.4 \cdot 10 ^ 6$&S$_{s,2}$ &$ 4 \cdot 10 ^ 4$&S$_{h,2}$ &$ 3.8 \cdot 10 ^ 7$\\
+    E$_{d,1}$ &$ 10 ^ 3$&E$_{s,1}$ &$ 20$&E$_{h,1}$ &$ 10$\\
+    E$_{d,2}$ &$ 2.9 \cdot 10 ^ 4$&E$_{s,2}$ &$  4 \cdot 10 ^ 2$&E$_{h,2}$ &$ 50$\\
+    I$_{d,1}$ &$ 10 ^ 3$&I$_{s,1}$ &$ 30$&I$_{h,1}$ &$ 1$\\
+    I$_{d,2}$ &$ 5 \cdot 10 ^ 4$&I$_{s,2}$ &$ 2.04 \cdot 10 ^ 3$&I$_{h,2}$ &$ 20$\\
+    V$_{d,1}$ &$ 10 ^ 3$&V$_{s,1}$ &$ 0$&V$_{h,1}$ &$ 6 \cdot 10 ^ 2$\\
+    V$_{d,2}$ &$ 2 \cdot 10 ^ 4$&V$_{s,2}$ &$ 0$&V$_{h,2}$ &$ 6 \cdot 10 ^ 2$\\
+  \end{tabularx}
+	\caption{Initial condition of the multi-patch SEIV model with stray dogs.}
+	\label{tab:2}
+\end{table}
+
+\begin{table*}
+\centering
+	\rowcolors{2}{NavyBlue!10}{white}
+	\begin{tabularx}{\linewidth}{lllX}
+	\rowcolor{NavyBlue!80} \textbf{\color{white}Parameter} & \textbf{\color{white}Value} & \textbf{\color{white}Unit} & \textbf{\color{white}Description} \\
+	$A_{s,1}$ & $3\cdot10^5$ & year$^{-1}$ & The annual birth rate of stray dogs in \nth{1} patch\\
+	$A_{s,2}$ & $5\cdot10^5$ & year$^{-1}$ & The annual birth rate of stray dogs in \nth{2} patch\\
+	
+	$m_{d,1}$ & $0.1$ & year$^{-1}$ & The non-disease related mortality rate of domestic dogs in \nth{1} patch\\
+	$m_{d,2}$ & $0.1$ & year$^{-1}$ & The non-disease related mortality rate of domestic dogs in \nth{2} patch\\
+	
+	$k_{s,1}$ & $0.345$ & year$^{-1}$ & The vaccination rate of stray dogs in \nth{1} patch\\
+	$k_{s,2}$ & $0.345$ & year$^{-1}$ & The vaccination rate of stray dogs in \nth{2} patch\\
+	
+	$\beta_{dd,1}$ & $2.45\cdot10^{-7}$ & year$^{-1}$ & The transmission coefficient of domestic dogs in \nth{1} patch\\
+	$\beta_{dd,2}$ & $2.2\cdot10^{-7}$ & year$^{-1}$ &  The transmission coefficient of domestic dogs \nth{2} patch\\
+	
+	$l_{1}$ & $0.014$ & year$^{-1}$ &  The rate of non-infectious domestic dogs abandon in \nth{1} patch\\
+	$l_{2}$ & $0.014$ & year$^{-1}$ &  The rate of non-infectious domestic dogs abandon in \nth{2} patch\\
+	
+	$\epsilon_1$ & $0.014$ & year$^{-1}$ & The rate of infectious domestic dogs abandon \nth{1} patch\\
+	$\epsilon_2$ & $0.014$ & year$^{-1}$ & The rate of infectious domestic dogs abandon in \nth{2} patch\\
+\end{tabularx}
+	\caption{Parameters of the multi-patch SEIV model with stray dogs.}
+	\label{tab:3}
+\end{table*}
+
 
 Fig. \ref{fig:ps1} shows a numerical simulation of the number of exposed and
 infectious humans in the Hebei and Fujian provinces. We notice that the number
 of infected humans increases with time in both provinces, suggesting that the
-system moves away form the disease-free equilibrium.
+system moves away from the disease-free equilibrium.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}Numerical simulation of the number of exposed and infectious humand in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs."}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:ps1}Numerical simulation of the number of exposed and infectious humans in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs."}
 source("SEIV_patch_stray.R")
 
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
@@ -839,12 +883,12 @@ as in the preious model (e.g $a_{dd}$=$\beta_{dd}$). The amplitudes of the
 oscillations are assumed proportional to the avreage transmission rates.
 
 Fig. \ref{fig:pss1} shows a numerical simulation of the number of exposed and
-infectious humand in the Hebei and Fujian provinces. We notice that the dynamic
+infectious humans in Hebei and Fujian. We notice that the dynamic
 of the system is similar to the one presented in the previous model, with the
-addition of oscillations.  We can also notice that the system moves away form
+addition of oscillations.  We can also notice that the system moves away from
 the disease-free equilibrium, as in the previous model.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}Numerical simulation of the number of exposed and infectious humand in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs and seasonal transmission rates."}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:pss1}Numerical simulation of the number of exposed and infectious humans in the Hebei and Fujian provinces for the multi-patch SEIV model with stray dogs and seasonal transmission rates."}
 source("SEIV_patch_stray_seasonal.R")
 
 ggplot(data = SEIR_out_long, aes(x = time, y = value, colour = variable)) +
@@ -933,8 +977,16 @@ ggplot(data = I_h_1_df_vax_long, aes(x = time, y = value, colour = variable)) +
 
 ### Effect of a dual immunocontraceptive vaccine
 
+Finally, we test the effect of reducing the birth rate of stray dogs and 
+increasing the vaccination rate of stray and domestic dogs. This effect should
+simulate the effect of using a dual immunocontraceptive vaccine, as proposed in
+\cite{Franka}. Fig. \ref{fig:gnrh} shows that the combination of a decrease in
+the birth rate and a simultaneous increase in the vaccination rate is very
+effective in reducing the number of human rabies cases. In particular, halving
+the birth rate of dogs ans increasing the vaccination rate to 40\% is enough to
+reduce $I_h$ to zero.
 
-```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:cull}plotting example"}
+```{r, echo=FALSE, fig.width=7, fig.height=6, fig.cap="\\label{fig:gnrh} Numerical simulation of the number of human rabies cases in the Hebei province for different values of the vaccination rate of stray and domestic dogs and the birth rate of stray dogs."}
 
 ggplot(data = I_h_1_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
   geom_line() + scale_color_discrete(name = "birth rate multiplier,\nvaccination rate",
@@ -943,17 +995,24 @@ ggplot(data = I_h_1_df_gnrh_long, aes(x = time, y = value, colour = variable)) +
   xlab("time (months)") + guides(col = guide_legend(nrow = 2))
 ```
 
-
-
 # Conclusions
 
 Different models have been proposed and summarized to describe the dynamic of
-the rabies epidemic in China. However some small inconsistencies in \cite{Cina}
-has made studying this paper challenging. Moreover data deficit has made
-impossible to estimate the accuracy of the new proposed patches model.
+the rabies epidemic in China. However, some small inconsistencies in \cite{Cina}
+have made studying this paper challenging.
+
+The new multi-patch models appear to be coherent with the thesis of recently
+published studies. In particular, we have seen that combined effect of
+vaccination and neutering, even at a relatively low rate, is sufficient to
+significantly decrease the number of new human rabies cases. However the lack of
+available data has made impossible to estimate the accuracy of the new proposed
+models.
 
 \begin{thebibliography}{1}
-	
+	\bibitem{Cina} 
+	Ruan S. Modeling the transmission dynamics and control of rabies in China.
+	Mathematical biosciences 286. 2017; 65-93. 
+	 
 	\bibitem{Wang}Wang L, Tang Q, Liang G. Rabies and rabies virus in wildlife in
 	mainland China, 1990-2013. Int J Infect Dis. 2014; 25:122-9.
 	
@@ -970,33 +1029,10 @@ impossible to estimate the accuracy of the new proposed patches model.
 	Shuangshoti S, Laothamatas J. Human rabies: neuropathogenesis, diagnosis, and
 	management. Lancet Neurol. 2013; 12(5):498-513.
 	
-	\bibitem{Cina} 
-	Ruan S. Modeling the transmission dynamics and control of rabies in China.
-	Mathematical biosciences 286. 2017; 65-93.
-	
-	\bibitem{54} 
-	J. Ma , Z. Ma. Epidemic threshold conditions for seasonally forced SEIR models.
-	Math. Biosci. Eng. 3. 2006; 161 -172.
-	 
-	\bibitem{78} 
-	I. Schwartz. Small amplitude, long periodic out breaks in seasonally driven
-	epidemics. J. Math. Biol. 30. 1992; 473 -491 .
-	
-	\bibitem{113} 
-	J. Zhang, Z. Jin, G. Sun, T. Zhou, S. Ruan. Analysis of rabies in China:
-	transmission dynamics and control. PLoS One 6. 2011; e20891.
-	
-	\bibitem{111} 
-	J. Zhang, Z. Jin, G. Sun, T. Zhou, S. Ruan. Analysis of rabies in China:
-	transmission dynamics and control. PLoS One 6. 2011; e20891.
-	
-	\bibitem{108} 
-	J. Yu, L. Hao, Q. Tang. The spatial and temporal dynamics of rabies in China.
-	PLoS Negl. Trop. Dis. 6. 2012; e1640.
-	
-	\bibitem{106} 
-	C. Yin, H. Zhou, H. Wu. Analysis on factors related to rabies epidemic in China
-	from 2007 -2011. Virol. Sin. 27. 2012; 132 -143.
+	\bibitem{mate1} 
+	Stefan Ma, Yingcun Xia. Mathematical Understanding of Infectious Disease
+	Dynamics. Lecture Notes Series, Institute for Mathematical Sciences, National
+	University of Singapore: Volume 16. 2008; 33-35.
 	
 	\bibitem{23} 
 	Diekmann, J.A.P. Heesterbeek, M.G. Roberts. The construction of next-generation
@@ -1007,10 +1043,29 @@ impossible to estimate the accuracy of the new proposed patches model.
 	X. Wang, J. Lou. Two dynamic models about rabies between dogs and human. Biol.
 	Syst. 16. 2008; 519 -529.
 	
-	\bibitem{mate1} 
-	Stefan Ma, Yingcun Xia. Mathematical Understanding of Infectious Disease
-	Dynamics. Lecture Notes Series, Institute for Mathematical Sciences, National
-	University of Singapore: Volume 16. 2008; 33-35.
+	\bibitem{113} 
+	J. Zhang, Z. Jin, G. Sun, T. Zhou, S. Ruan. Analysis of rabies in China:
+	transmission dynamics and control. PLoS One 6. 2011; e20891.
+	
+	\bibitem{54} 
+	J. Ma , Z. Ma. Epidemic threshold conditions for seasonally forced SEIR models.
+	Math. Biosci. Eng. 3. 2006; 161 -172.
+	
+	\bibitem{78} 
+	I. Schwartz. Small amplitude, long periodic out breaks in seasonally driven
+	epidemics. J. Math. Biol. 30. 1992; 473 -491 .
+	
+	\bibitem{111} 
+	J. Zhang, Z. Jin, G. Sun, T. Zhou, S. Ruan. Analysis of rabies in China:
+	transmission dynamics and control. PLoS One 6. 2011; e20891.
+	
+	\bibitem{106} 
+	C. Yin, H. Zhou, H. Wu. Analysis on factors related to rabies epidemic in China
+	from 2007 -2011. Virol. Sin. 27. 2012; 132 -143.
+	
+	\bibitem{108} 
+	J. Yu, L. Hao, Q. Tang. The spatial and temporal dynamics of rabies in China.
+	PLoS Negl. Trop. Dis. 6. 2012; e1640.
 	
 	\bibitem{Franka} Franka R, Smith TG, Dyer JL, Wu X, Niezgoda M, Rupprecht CE.
 	Current and future tools for global canine rabies elimination. Antiviral Res.
